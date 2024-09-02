@@ -1,8 +1,9 @@
-"use client";
-export default function Home() {
+const Page = () => {
   return (
     <div>
       <h1>Accessories</h1>
     </div>
   );
-}
+};
+
+export default Page;

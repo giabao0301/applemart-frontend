@@ -21,7 +21,7 @@ export default function Login() {
 
   return (
     <form className="mt-24">
-      <h1 className="text-3xl text-center font-bold pt-8">Đăng nhập</h1>
+      <h1 className="text-3xl text-center font-bold pt-8">Đăng ký</h1>
       <div className="max-w-[1200px] m-auto w-4/5 pt-8 pb-5 px-0 border-b border-solid border-[#e7e7e8]">
         <div className="flex flex-col justify-around items-center max-w-[460px] mx-auto gap-6 mb-4">
           <Input
@@ -36,17 +36,21 @@ export default function Login() {
             onValueChange={setValue}
           />
           <Input
-            isRequired
             label="Mật khẩu"
+            isRequired
             variant="bordered"
             endContent={
               <button
-                className="focus:outline-none "
+                className="focus:outline-none"
                 type="button"
                 onClick={toggleVisibility}
                 aria-label="toggle password visibility"
               >
-                {isVisible ? <EyeSlashFilledIcon /> : <EyeFilledIcon />}
+                {isVisible ? (
+                  <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                ) : (
+                  <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                )}
               </button>
             }
             type={isVisible ? "text" : "password"}
@@ -55,16 +59,13 @@ export default function Login() {
         </div>
 
         <div className="text-center">
-          Chưa có tài khoản?
-          <Link href="/signup" className="text-[#0071e3] cursor-pointer ml-2">
-            Đăng ký
+          Đã có tài khoản?
+          <Link href="/login" className="text-[#0071e3] cursor-pointer ml-2">
+            Đăng nhập
           </Link>
         </div>
       </div>
       <div className="min-h-10 max-w-full m-auto text-center mt-4">
-        {/* <button className="text-[18px] py-1 px-[15px] inline-block bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white rounded hover:opacity-80">
-          Đăng nhập
-        </button> */}
         <Button
           radius="full"
           className="bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-[18px] py-1 px-[15px] focus:outline-none"

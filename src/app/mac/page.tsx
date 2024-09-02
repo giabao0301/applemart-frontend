@@ -1,9 +1,7 @@
-import Image from "next/image";
-
 const Page = () => {
   return (
     <div>
-      <h1>iPhone</h1>
+      <h1>Mac</h1>
     </div>
   );
 };

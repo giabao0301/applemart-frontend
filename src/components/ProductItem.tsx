@@ -3,6 +3,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
+import { useRouter } from "next/navigation";
 
 interface ProductProps {
   product: Product;
@@ -10,20 +11,26 @@ interface ProductProps {
 
 const ProductItem: React.FC<ProductProps> = ({ product }) => {
   const colors =
-    product.category.variations.find((variation) => variation.name === "color")
+    product.variations.find((variation) => variation.name === "color")
       ?.options || [];
 
   return (
     <li key={product.id}>
-      <Link href={"/"}>
+      <Link
+        href={{
+          pathname: `${product.category}/${product.slug}`,
+          query: { id: product.id },
+        }}
+      >
         <div className="flex flex-col h-[29.4117647059rem] overflow-hidden p-8 transition-all duration-300 ease-ease cursor-pointer w-72 bg-white rounded-[18px] shadow-product-card mr-5 mb-12 hover:shadow-product-card-hover hover:scale-101">
           <div className="my-0 mx-auto min-h-[13.5294117647rem] pb-0 pt-[2.4rem] w-full">
             <Image
               className="block h-[13.5294117647rem] mx-auto w-auto my-0"
               src={product?.imageUrl}
-              alt=""
+              alt={product.name}
               width={200}
               height={200}
+              priority
             />
           </div>
           <div className="flex flex-col h-[9.7647058824rem] pt-[1.176rem] relative">
