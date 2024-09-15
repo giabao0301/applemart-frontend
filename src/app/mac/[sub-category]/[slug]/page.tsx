@@ -1,6 +1,9 @@
 "use client";
 import ProductDetail from "@/components/ProductDetail";
-import { getProductBySlug } from "@/services/productService";
+import {
+  getProductItemBySlug,
+  getProductByName,
+} from "@/services/productService";
 import {
   Configuration,
   Option,
@@ -12,10 +15,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-
-type GroupedOptions = {
-  [key: string]: Option[];
-};
+import { useMemo } from "react";
 
 const Page = () => {
   const params = useParams<{ slug: string }>();
@@ -23,24 +23,38 @@ const Page = () => {
   const slug: string = params.slug;
 
   const { isPending, error, data } = useQuery({
-    queryKey: ["products", slug],
-    queryFn: () => getProductBySlug(slug),
-    enabled: !!slug,
+    queryKey: ["productItem", slug],
+    queryFn: () => getProductItemBySlug(slug),
   });
 
-  // TODO: return skeleton loading for product detail
+  const productItem = useMemo(() => data as ProductItem, [data]);
+
+  const productQuery = useQuery({
+    queryKey: ["product", productItem?.productName],
+    queryFn: () => getProductByName(productItem?.productName),
+    enabled: !!productItem,
+  });
+
+  const product = useMemo(
+    () => productQuery.data as Product,
+    [productQuery.data]
+  );
+
   if (isPending) return <div>Loading...</div>;
 
   if (error) {
-    console.log("Error fetching product: ", error);
+    console.log("Error fetching product items: ", error);
+    return <div>Error fetching product items</div>;
+  }
+
+  if (productQuery.isPending) return <div>Loading...</div>;
+
+  if (productQuery.error) {
+    console.log("Error fetching product: ", productQuery.error);
     return <div>Error fetching product</div>;
   }
 
-  const product: Product = data;
-
-  console.log(product);
-
-  return <ProductDetail product={product} />;
+  return <ProductDetail productItem={productItem} product={product} />;
 };
 
 export default Page;

@@ -1,14 +1,25 @@
 "use client";
-import { getProductItemsBySlug } from "@/services/productService";
-import { Option, Product, ProductItem, Variation } from "@/types/product";
+import {
+  getProductByName,
+  getVariationOptionsByProductId,
+} from "@/services/productService";
+import {
+  Configuration,
+  Option,
+  Product,
+  ProductItem,
+  Variation,
+} from "@/types/product";
 import { Button } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import React, { useEffect, useMemo, useState } from "react";
 import formatPrice from "@/utils/priceFormatter";
 import { useRouter } from "next/navigation";
+import slugify from "@/utils/slugConverter";
 
 interface Props {
+  productItem: ProductItem;
   product: Product;
 }
 
@@ -16,27 +27,16 @@ interface SelectedOptions {
   [key: string]: string | number;
 }
 
-const ProductDetail: React.FC<Props> = ({ product }) => {
+const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
   const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
-  const [sku, setSku] = useState<string>(product.name);
-  const [productItem, setProductItem] = useState<ProductItem>();
 
   const { isPending, error, data } = useQuery({
-    queryKey: ["productItems", product.slug],
-    queryFn: () => getProductItemsBySlug(product.slug),
+    queryKey: ["variationOptions", product.id],
+    queryFn: () => getVariationOptionsByProductId(product.id),
   });
 
-  const productItems = useMemo(() => data || [], [data]);
-
-  const variations = useMemo(
-    () =>
-      productItems
-        .map((item) => item.configurations)
-        .flat()
-        .map((config) => config.variationOption),
-    [productItems]
-  );
+  const variations = useMemo(() => data || [], [data]);
 
   const colors = useMemo(
     () =>
@@ -83,44 +83,41 @@ const ProductDetail: React.FC<Props> = ({ product }) => {
   useEffect(() => {
     const initialOptions: SelectedOptions = {};
 
-    for (const option of optionNames) {
-      if (option === "Màu" && colors.length > 0) {
-        initialOptions[option] = colors[0].value;
-      } else {
-        groupedVariations.forEach((variation) => {
-          if (variation.name === option) {
-            initialOptions[option] = variation.options[0].value;
-          }
-        });
-      }
-    }
+    productItem.configurations.forEach((config: Configuration) => {
+      initialOptions[config.variationOption.name] =
+        config.variationOption.value;
+    });
 
     setSelectedOptions(initialOptions);
-  }, [optionNames, colors, groupedVariations]);
+  }, [productItem.configurations]);
 
   useEffect(() => {
-    let newSku = product.name;
-    for (const key of Object.keys(selectedOptions)) {
-      if (key === "Ổ cứng" || key === "Dung lượng lưu trữ") {
-        newSku += `/${selectedOptions[key]}`;
-      } else {
-        newSku += ` ${selectedOptions[key]}`;
-      }
+    let sku = product.name;
+    for (const value of Object.values(selectedOptions)) {
+      if (value) sku += ` ${value}`;
     }
-    setSku(newSku);
-  }, [selectedOptions, product.name]);
 
-  useEffect(() => {
-    const productItem = productItems.find((item) => item.sku === sku);
-    setProductItem(productItem);
-  }, [sku, productItems]);
+    if (sku === product.name) return;
 
-  const image = productItem ? productItem.image : product.images[0].url;
+    const slug = slugify(sku);
+    router.push(`/${product.parentCategory}/${product.category}/${slug}`);
+  }, [
+    selectedOptions,
+    productItem.productName,
+    product.parentCategory,
+    product.category,
+    product.name,
+    router,
+  ]);
+
+  console.log(selectedOptions);
+
+  const image = product.images[0].url;
   const price = productItem ? productItem.price : product.lowestPrice;
 
-  if (isPending) return <h1>Loading...</h1>;
+  if (isPending) return <div>Loading...</div>;
 
-  if (error) return <h1>Error</h1>;
+  if (error) return;
 
   return (
     <div className="flex flex-wrap mb-[50px] mx-auto w-[882px]">
@@ -158,7 +155,7 @@ const ProductDetail: React.FC<Props> = ({ product }) => {
         </div>
       </div>
       <div className="flex flex-col justify-between basis-1/3 max-w-[33.33333%]">
-        <h1 className="text-3xl font-semibold">{sku}</h1>
+        <h1 className="text-3xl font-semibold">{productItem.sku}</h1>
         <div className="mt-8">
           {colors && (
             <>

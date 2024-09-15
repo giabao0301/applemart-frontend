@@ -1,9 +1,9 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
-import { getVariationOptionsByProductId } from "@/services/productService";
+import { getProductItemsByProductName } from "@/services/productService";
 import { useQuery } from "@tanstack/react-query";
 import SkeletonCard from "./SkeletonCard";
 import formatPrice from "@/utils/priceFormatter";
@@ -14,27 +14,43 @@ interface ProductProps {
 
 const ProductItem: React.FC<ProductProps> = ({ product }) => {
   const { isPending, error, data } = useQuery({
-    queryKey: ["variationOptions", product.id],
-    queryFn: () => getVariationOptionsByProductId(product.id),
+    queryKey: ["productItems", product.name],
+    queryFn: () => getProductItemsByProductName(product.name),
   });
+
+  const productItems = useMemo(() => data || [], [data]);
+
+  const variations = useMemo(
+    () =>
+      productItems
+        .map((item) => item.configurations)
+        .flat()
+        .map((config) => config.variationOption),
+    [productItems]
+  );
+
+  const colors = useMemo(
+    () =>
+      variations
+        .filter((variation) => variation.name === "Màu")
+        .filter(
+          (variation, index, self) =>
+            self.findIndex((v) => v.value === variation.value) === index
+        ),
+    [variations]
+  );
 
   if (isPending) return <SkeletonCard />;
 
-  if (error) return;
-
-  const variations = data || [];
-
-  const colors = variations
-    .filter((variation) => variation.name === "Màu")
-    .filter(
-      (variation, index, self) =>
-        self.findIndex((v) => v.value === variation.value) === index
-    );
+  if (error) {
+    console.log("Error fetching product items: ", error);
+    return <div>Error fetching product items</div>;
+  }
 
   return (
     <li key={product.id}>
       <Link
-        href={`/${product.parentCategory}/${product.category}/${product.slug}`}
+        href={`/${product.parentCategory}/${product.category}/${productItems[0]?.slug}`}
       >
         <div className="flex flex-col h-[29.4117647059rem] overflow-hidden p-8 transition-all duration-300 ease-ease cursor-pointer w-72 bg-white rounded-[18px] shadow-product-card mr-5 mb-12 hover:shadow-product-card-hover hover:scale-101">
           <div className="my-0 mx-auto min-h-[13.5294117647rem] pb-0 pt-[2.4rem] w-full">
