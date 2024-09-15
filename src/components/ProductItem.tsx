@@ -3,33 +3,47 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
-import { useRouter } from "next/navigation";
+import { getVariationOptionsByProductId } from "@/services/productService";
+import { useQuery } from "@tanstack/react-query";
+import SkeletonCard from "./SkeletonCard";
+import formatPrice from "@/utils/priceFormatter";
 
 interface ProductProps {
   product: Product;
 }
 
 const ProductItem: React.FC<ProductProps> = ({ product }) => {
-  const colors =
-    product.variations.find((variation) => variation.name === "color")
-      ?.options || [];
+  const { isPending, error, data } = useQuery({
+    queryKey: ["variationOptions", product.id],
+    queryFn: () => getVariationOptionsByProductId(product.id),
+  });
+
+  if (isPending) return <SkeletonCard />;
+
+  if (error) return;
+
+  const variations = data || [];
+
+  const colors = variations
+    .filter((variation) => variation.name === "Màu")
+    .filter(
+      (variation, index, self) =>
+        self.findIndex((v) => v.value === variation.value) === index
+    );
 
   return (
     <li key={product.id}>
       <Link
-        href={{
-          pathname: `${product.category}/${product.slug}`,
-          query: { id: product.id },
-        }}
+        href={`/${product.parentCategory}/${product.category}/${product.slug}`}
       >
         <div className="flex flex-col h-[29.4117647059rem] overflow-hidden p-8 transition-all duration-300 ease-ease cursor-pointer w-72 bg-white rounded-[18px] shadow-product-card mr-5 mb-12 hover:shadow-product-card-hover hover:scale-101">
           <div className="my-0 mx-auto min-h-[13.5294117647rem] pb-0 pt-[2.4rem] w-full">
             <Image
-              className="block h-[13.5294117647rem] mx-auto w-auto my-0"
-              src={product?.imageUrl}
+              className="block mx-auto my-0 h-auto w-auto"
+              src={product.thumbnailUrl}
               alt={product.name}
-              width={200}
-              height={200}
+              width={216}
+              height={216}
               priority
             />
           </div>
@@ -55,7 +69,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
             </div>
             <div className="pt-0 mt-auto ">
               <span className="text-base font-normal leading-5 tracking-wide">
-                Chỉ từ {product.lowestPrice}đ
+                {formatPrice(product.lowestPrice)}đ
               </span>
             </div>
           </div>

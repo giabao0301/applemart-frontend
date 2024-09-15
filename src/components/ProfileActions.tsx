@@ -20,7 +20,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserInfo } from "@/services/userService";
 import { Skeleton } from "./ui/skeleton";
 import { User } from "@/types/user";
-import { set } from "react-hook-form";
 
 type ProfileProps = {
   isMenuOpen: boolean;
@@ -30,35 +29,39 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
   const isAuthed: boolean = isAuthenticated();
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isAuthed) {
       setIsLoggedIn(true);
-      setIsLoading(false);
     }
   }, [isAuthed]);
 
   const router = useRouter();
 
-  const { error, data, isFetching } = useQuery({
+  const { error, data, isPending } = useQuery({
     queryKey: ["user"],
     queryFn: getUserInfo,
-    enabled: isLoggedIn,
+    enabled: !!isLoggedIn,
   });
 
-  if (isLoading || isFetching)
+  if (isPending) {
     return (
       <NavbarContent as="div" justify="end" className="hidden lg:flex">
         <Skeleton className="w-7 h-7 rounded-full" />
       </NavbarContent>
     );
+  }
 
   if (error) {
     console.log("Error fetching user info: ", error);
+    return (
+      <NavbarContent as="div" justify="end" className="hidden lg:flex">
+        <Skeleton className="w-7 h-7 rounded-full" />
+      </NavbarContent>
+    );
   }
 
-  const user: User = data?.data;
+  const user: User = data;
 
   const logoutHandler = () => {
     logout();
@@ -71,7 +74,7 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
       <NavbarContent as="div" justify="end" className="hidden lg:flex">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            {isLoggedIn ? (
+            {isLoggedIn && user ? (
               <Avatar
                 as="button"
                 className="transition-transform w-7 h-7"
@@ -91,7 +94,7 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
             )}
           </DropdownTrigger>
 
-          {isLoggedIn ? (
+          {isLoggedIn && user ? (
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem
                 key="profile"

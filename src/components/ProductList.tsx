@@ -25,11 +25,8 @@ export default function ProductList() {
     console.log("Error fetching products: ", error);
   }
 
-  const response = data?.data;
-
-  const products: Array<Product> = response.data.content;
-
-  console.log(products);
+  const products: Array<Product> = data?.content || [];
+  const pages = data?.totalElements || "";
 
   return (
     <ul className="grid grid-cols-2 lg:grid-cols-4 w-full">

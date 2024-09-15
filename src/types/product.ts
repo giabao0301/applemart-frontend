@@ -1,11 +1,13 @@
 interface Product {
   id: number;
   name: string;
+  category: string;
+  parentCategory: string;
   lowestPrice: number;
   description: string;
-  imageUrl: string;
+  thumbnailUrl: string;
   slug: string;
-  category: string;
+  images: Array<ProductImage>;
   variations: Array<Variation>;
 }
 
@@ -16,8 +18,9 @@ interface ProductItem {
   quantity: number;
   price: number;
   slug: string;
-  images: Array<ProductImage>;
+  image: string;
   configurations: Array<Configuration>;
+  attributes: Array<ProductAttribute>;
 }
 
 interface ProductImage {
@@ -38,24 +41,24 @@ interface Option {
 
 interface ProductAttribute {
   id: number;
-  key: string;
   value: string;
 }
 
 interface Category {
   id: number;
   name: string;
+  parentCategory: string;
   urlKey: string;
-  imageUrl: string;
+  thumbnailUrl: string;
 }
 
 interface Variation {
   id: number;
   name: string;
-  options: Array<Option>;
+  options: Array<VariationOption>;
 }
 
-interface Option {
+interface VariationOption {
   id: number;
   value: string;
   imageUrl: string;
@@ -65,6 +68,7 @@ export type {
   Product,
   Category,
   Variation,
+  VariationOption,
   Option,
   ProductItem,
   Configuration,

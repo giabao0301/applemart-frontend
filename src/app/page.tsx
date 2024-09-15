@@ -1,3 +1,4 @@
+import Categories from "@/components/Categories";
 import ProductList from "@/components/ProductList";
 
 export default function Home() {
@@ -11,6 +12,7 @@ export default function Home() {
           Nơi tuyệt vời để mua sản phẩm công nghệ mà bạn thích.
         </div>
       </div>
+      <Categories />
       <ProductList />
     </div>
   );
