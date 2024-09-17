@@ -20,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUserInfo } from "@/services/userService";
 import { Skeleton } from "./ui/skeleton";
 import { User } from "@/types/user";
+import { set } from "zod";
 
 type ProfileProps = {
   isMenuOpen: boolean;
@@ -29,22 +30,26 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
   const isAuthed: boolean = isAuthenticated();
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (isAuthed) {
       setIsLoggedIn(true);
+      setIsLoading(false);
     }
+
+    setIsLoading(false);
   }, [isAuthed]);
 
   const router = useRouter();
 
-  const { error, data, isPending } = useQuery({
+  const { error, data, isFetching } = useQuery({
     queryKey: ["user"],
     queryFn: getUserInfo,
     enabled: !!isLoggedIn,
   });
 
-  if (isPending) {
+  if (isLoading || isFetching) {
     return (
       <NavbarContent as="div" justify="end" className="hidden lg:flex">
         <Skeleton className="w-7 h-7 rounded-full" />
@@ -60,8 +65,7 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
       </NavbarContent>
     );
   }
-
-  const user: User = data;
+  const user: User | undefined = data;
 
   const logoutHandler = () => {
     logout();

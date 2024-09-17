@@ -4,16 +4,8 @@ import {
   getProductItemBySlug,
   getProductByName,
 } from "@/services/productService";
-import {
-  Configuration,
-  Option,
-  Product,
-  ProductImage,
-  ProductItem,
-  Variation,
-} from "@/types/product";
+import { Product, ProductItem } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
 
@@ -25,6 +17,7 @@ const Page = () => {
   const { isPending, error, data } = useQuery({
     queryKey: ["productItem", slug],
     queryFn: () => getProductItemBySlug(slug),
+    enabled: !!slug,
   });
 
   const productItem = useMemo(() => data as ProductItem, [data]);
@@ -54,7 +47,9 @@ const Page = () => {
     return <div>Error fetching product</div>;
   }
 
-  return <ProductDetail productItem={productItem} product={product} />;
+  const decodedSlug = decodeURIComponent(slug);
+
+  return <ProductDetail decodedSlug={decodedSlug} product={product} />;
 };
 
 export default Page;

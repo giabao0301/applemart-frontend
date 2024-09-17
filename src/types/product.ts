@@ -18,7 +18,7 @@ interface ProductItem {
   quantity: number;
   price: number;
   slug: string;
-  image: string;
+  imageUrl: string;
   configurations: Array<Configuration>;
   attributes: Array<ProductAttribute>;
 }

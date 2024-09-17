@@ -1,6 +1,6 @@
 "use client";
 import {
-  getProductByName,
+  getProductItemsByProductName,
   getVariationOptionsByProductId,
 } from "@/services/productService";
 import {
@@ -13,13 +13,13 @@ import {
 import { Button } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import formatPrice from "@/utils/priceFormatter";
 import { useRouter } from "next/navigation";
 import slugify from "@/utils/slugConverter";
 
 interface Props {
-  productItem: ProductItem;
+  decodedSlug: string;
   product: Product;
 }
 
@@ -27,7 +27,7 @@ interface SelectedOptions {
   [key: string]: string | number;
 }
 
-const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
+const ProductDetail: React.FC<Props> = ({ decodedSlug, product }) => {
   const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
 
@@ -35,6 +35,23 @@ const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
     queryKey: ["variationOptions", product.id],
     queryFn: () => getVariationOptionsByProductId(product.id),
   });
+
+  const productItemsQuery = useQuery({
+    queryKey: ["productItems", product.name],
+    queryFn: () => getProductItemsByProductName(product.name),
+  });
+
+  const productItems = useMemo(
+    () => productItemsQuery.data || [],
+    [productItemsQuery.data]
+  );
+
+  const productItem: ProductItem | undefined = productItems.find(
+    (item) => item.slug === decodedSlug
+  );
+  console.log(productItems);
+
+  console.log(productItem);
 
   const variations = useMemo(() => data || [], [data]);
 
@@ -72,24 +89,16 @@ const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
     }, []);
   }, [options]);
 
-  const optionNames = useMemo(
-    () =>
-      variations
-        .map((variation) => variation.name)
-        .filter((value, index, self) => self.indexOf(value) === index),
-    [variations]
-  );
-
   useEffect(() => {
     const initialOptions: SelectedOptions = {};
 
-    productItem.configurations.forEach((config: Configuration) => {
+    productItem?.configurations.forEach((config: Configuration) => {
       initialOptions[config.variationOption.name] =
         config.variationOption.value;
     });
 
     setSelectedOptions(initialOptions);
-  }, [productItem.configurations]);
+  }, [productItem?.configurations]);
 
   useEffect(() => {
     let sku = product.name;
@@ -100,10 +109,10 @@ const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
     if (sku === product.name) return;
 
     const slug = slugify(sku);
-    router.push(`/${product.parentCategory}/${product.category}/${slug}`);
+    router.replace(`/${product.parentCategory}/${product.category}/${slug}`);
   }, [
     selectedOptions,
-    productItem.productName,
+    productItem?.productName,
     product.parentCategory,
     product.category,
     product.name,
@@ -112,16 +121,20 @@ const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
 
   console.log(selectedOptions);
 
-  const image = product.images[0].url;
+  const image = productItem ? productItem.imageUrl : product.images[0].url;
   const price = productItem ? productItem.price : product.lowestPrice;
 
   if (isPending) return <div>Loading...</div>;
 
   if (error) return;
 
+  if (productItemsQuery.isPending) return <div>Loading...</div>;
+
+  if (productItemsQuery.error) return;
+
   return (
-    <div className="flex flex-wrap mb-[50px] mx-auto w-[882px]">
-      <div className="basis-7/12 max-w-[58.33333%] mr-[8.33333%]">
+    <div className="flex flex-wrap mb-[50px] mx-auto w-[912px]">
+      <div className="basis-[45.83333%] max-w-[45.83333%] mr-[8.33333%]">
         <div className="w-full h-auto">
           <Image
             className="w-auto h-auto"
@@ -129,6 +142,9 @@ const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
             alt=""
             width={514}
             height={477}
+            quality={100}
+            unoptimized={true}
+            priority
           />
           <ul className="flex justify-between">
             <li>
@@ -138,6 +154,8 @@ const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
                 alt=""
                 width={67}
                 height={67}
+                quality={100}
+                unoptimized={true}
               />
             </li>
             {product.images.slice(1).map((image) => (
@@ -148,14 +166,18 @@ const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
                   alt=""
                   width={67}
                   height={67}
+                  quality={100}
+                  unoptimized={true}
                 />
               </li>
             ))}
           </ul>
         </div>
       </div>
-      <div className="flex flex-col justify-between basis-1/3 max-w-[33.33333%]">
-        <h1 className="text-3xl font-semibold">{productItem.sku}</h1>
+      <div className="flex flex-col justify-between basis-[45.83333%] max-w-[45.83333%]">
+        <div className="min-h-28">
+          <h1 className="text-3xl font-semibold">{productItem?.sku}</h1>
+        </div>
         <div className="mt-8">
           {colors && (
             <>
@@ -169,16 +191,18 @@ const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
                     className={`rounded-full cursor-pointer ${
                       selectedOptions.Màu === color.value && "border-2"
                     } border-[#0071e3]`}
-                    onClick={() =>
+                    onClick={() => {
+                      if (selectedOptions.Màu === color.value) return;
+
                       setSelectedOptions((prev) => ({
                         ...prev,
                         Màu: color.value,
-                      }))
-                    }
+                      }));
+                    }}
                   >
                     <Image
-                      width={28}
-                      height={28}
+                      width={30}
+                      height={30}
                       src={color.imageUrl}
                       alt=""
                       className="p-1 rounded-full"
@@ -215,7 +239,7 @@ const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
               </div>
             ))}
         </div>
-        <div className="pb-4 mt-12">
+        <div className="my-8">
           <span className="text-xl leading-6 font-semibold">
             {formatPrice(price)}đ
           </span>
@@ -223,7 +247,7 @@ const ProductDetail: React.FC<Props> = ({ productItem, product }) => {
         <Button
           type="submit"
           radius="full"
-          className="bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-lg py-1 px-[15px] focus:outline-none"
+          className="w-3/4 bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-lg py-1 px-[15px] focus:outline-none"
         >
           Thanh toán
         </Button>
