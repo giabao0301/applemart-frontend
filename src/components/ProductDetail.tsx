@@ -1,35 +1,40 @@
 "use client";
 import {
-  getProductItemsByProductName,
+  getProductItemsByProductSlug,
   getVariationOptionsByProductId,
 } from "@/services/productService";
-import {
-  Configuration,
-  Option,
-  Product,
-  ProductItem,
-  Variation,
-} from "@/types/product";
+import { Option, Product, Variation } from "@/types/product";
 import { Button } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import React, { use, useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import formatPrice from "@/utils/priceFormatter";
-import { useRouter } from "next/navigation";
 import slugify from "@/utils/slugConverter";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface Props {
-  decodedSlug: string;
   product: Product;
 }
+const queryKeyMap: Record<string, string> = {
+  Màu: "color",
+  RAM: "ram",
+  "Ổ cứng": "ssd",
+  "Dung lượng lưu trữ": "storage",
+};
 
-interface SelectedOptions {
-  [key: string]: string | number;
-}
-
-const ProductDetail: React.FC<Props> = ({ decodedSlug, product }) => {
+const ProductDetail: React.FC<Props> = ({ product }) => {
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
+
+  const selectedOptions = Object.fromEntries(searchParams.entries());
+
+  const displayOptions = Object.keys(selectedOptions).reduce((acc, key) => {
+    const decodedKey = decodeURIComponent(key);
+    const friendlyKey = queryKeyMap[decodedKey] || decodedKey;
+    const decodedValue = decodeURIComponent(selectedOptions[key]);
+    acc[friendlyKey] = decodedValue;
+    return acc;
+  }, {} as Record<string, string>);
 
   const { isPending, error, data } = useQuery({
     queryKey: ["variationOptions", product.id],
@@ -37,21 +42,14 @@ const ProductDetail: React.FC<Props> = ({ decodedSlug, product }) => {
   });
 
   const productItemsQuery = useQuery({
-    queryKey: ["productItems", product.name],
-    queryFn: () => getProductItemsByProductName(product.name),
+    queryKey: ["productItems", product.slug],
+    queryFn: () => getProductItemsByProductSlug(product.slug),
   });
 
   const productItems = useMemo(
     () => productItemsQuery.data || [],
     [productItemsQuery.data]
   );
-
-  const productItem: ProductItem | undefined = productItems.find(
-    (item) => item.slug === decodedSlug
-  );
-  console.log(productItems);
-
-  console.log(productItem);
 
   const variations = useMemo(() => data || [], [data]);
 
@@ -89,48 +87,44 @@ const ProductDetail: React.FC<Props> = ({ decodedSlug, product }) => {
     }, []);
   }, [options]);
 
-  useEffect(() => {
-    const initialOptions: SelectedOptions = {};
+  const productNameWithSelectedOptions = useMemo(() => {
+    let productName = product.name;
 
-    productItem?.configurations.forEach((config: Configuration) => {
-      initialOptions[config.variationOption.name] =
-        config.variationOption.value;
-    });
-
-    setSelectedOptions(initialOptions);
-  }, [productItem?.configurations]);
-
-  useEffect(() => {
-    let sku = product.name;
-    for (const value of Object.values(selectedOptions)) {
-      if (value) sku += ` ${value}`;
+    for (const value of Object.values(displayOptions)) {
+      productName += ` ${value}`;
     }
 
-    if (sku === product.name) return;
+    return productName;
+  }, [product.name, displayOptions]);
 
-    const slug = slugify(sku);
-    router.replace(`/${product.parentCategory}/${product.category}/${slug}`);
-  }, [
-    selectedOptions,
-    productItem?.productName,
-    product.parentCategory,
-    product.category,
-    product.name,
-    router,
-  ]);
+  const selectedProductItem = useMemo(() => {
+    const slug = slugify(productNameWithSelectedOptions);
+    return productItems.find((item) => item.slug === slug);
+  }, [productNameWithSelectedOptions, productItems]);
 
-  console.log(selectedOptions);
+  const updateQueryParams = (name: string, value: string) => {
+    const params = new URLSearchParams(searchParams);
+    const friendlyKey = Object.keys(queryKeyMap).find(
+      (key) => queryKeyMap[key] === name
+    );
+    params.set(friendlyKey || name, value);
+    router.push(`?${params.toString()}`);
+  };
 
-  const image = productItem ? productItem.imageUrl : product.images[0].url;
-  const price = productItem ? productItem.price : product.lowestPrice;
+  const image = selectedProductItem
+    ? selectedProductItem.imageUrl
+    : product.images[0].url;
+  const price = selectedProductItem
+    ? selectedProductItem.price
+    : product.lowestPrice;
 
   if (isPending) return <div>Loading...</div>;
 
-  if (error) return;
+  if (error) return <div>Error fetching product items</div>;
 
-  if (productItemsQuery.isPending) return <div>Loading...</div>;
+  if (productItemsQuery.isLoading) return <div>Loading...</div>;
 
-  if (productItemsQuery.error) return;
+  if (productItemsQuery.error) return <div>Error fetching product items</div>;
 
   return (
     <div className="flex flex-wrap mb-[50px] mx-auto w-[912px]">
@@ -176,13 +170,19 @@ const ProductDetail: React.FC<Props> = ({ decodedSlug, product }) => {
       </div>
       <div className="flex flex-col justify-between basis-[45.83333%] max-w-[45.83333%]">
         <div className="min-h-28">
-          <h1 className="text-3xl font-semibold">{productItem?.sku}</h1>
+          {selectedProductItem ? (
+            <h1 className="text-3xl font-semibold">
+              {selectedProductItem.sku}
+            </h1>
+          ) : (
+            <h1 className="text-4xl font-semibold">{product.name}</h1>
+          )}
         </div>
         <div className="mt-8">
           {colors && (
             <>
               <div className="font-semibold">
-                Màu {` - ${selectedOptions.Màu}`}
+                Màu {selectedOptions.Màu && ` - ${selectedOptions.Màu}`}
               </div>
               <ul className="flex gap-4 pt-[18px]">
                 {colors.map((color) => (
@@ -191,14 +191,7 @@ const ProductDetail: React.FC<Props> = ({ decodedSlug, product }) => {
                     className={`rounded-full cursor-pointer ${
                       selectedOptions.Màu === color.value && "border-2"
                     } border-[#0071e3]`}
-                    onClick={() => {
-                      if (selectedOptions.Màu === color.value) return;
-
-                      setSelectedOptions((prev) => ({
-                        ...prev,
-                        Màu: color.value,
-                      }));
-                    }}
+                    onClick={() => updateQueryParams("Màu", color.value)}
                   >
                     <Image
                       width={30}
@@ -226,10 +219,7 @@ const ProductDetail: React.FC<Props> = ({ decodedSlug, product }) => {
                         "border-2"
                       } border-[#0071e3]`}
                       onClick={() =>
-                        setSelectedOptions((prev) => ({
-                          ...prev,
-                          [variation.name]: option.value,
-                        }))
+                        updateQueryParams(variation.name, option.value)
                       }
                     >
                       {option.value}

@@ -1,9 +1,9 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { use, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
-import { getProductItemsByProductName } from "@/services/productService";
+import { getVariationOptionsByProductId } from "@/services/productService";
 import { useQuery } from "@tanstack/react-query";
 import SkeletonCard from "./SkeletonCard";
 import formatPrice from "@/utils/priceFormatter";
@@ -14,20 +14,11 @@ interface ProductProps {
 
 const ProductItem: React.FC<ProductProps> = ({ product }) => {
   const { isPending, error, data } = useQuery({
-    queryKey: ["productItems", product.name],
-    queryFn: () => getProductItemsByProductName(product.name),
+    queryKey: ["variationOptions", product.id],
+    queryFn: () => getVariationOptionsByProductId(product.id),
+    staleTime: 1000 * 60 * 5,
   });
-
-  const productItems = useMemo(() => data || [], [data]);
-
-  const variations = useMemo(
-    () =>
-      productItems
-        .map((item) => item.configurations)
-        .flat()
-        .map((config) => config.variationOption),
-    [productItems]
-  );
+  const variations = useMemo(() => data || [], [data]);
 
   const colors = useMemo(
     () =>
@@ -50,7 +41,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
   return (
     <li key={product.id}>
       <Link
-        href={`/${product.parentCategory}/${product.category}/${productItems[0]?.slug}`}
+        href={`/${product.parentCategory}/${product.category}/${product.slug}`}
       >
         <div className="flex flex-col h-[29.4117647059rem] overflow-hidden p-8 transition-all duration-300 ease-ease cursor-pointer w-72 bg-white rounded-[18px] shadow-product-card mr-5 mb-12 hover:shadow-product-card-hover hover:scale-101">
           <div className="my-0 mx-auto min-h-[13.5294117647rem] pb-0 pt-[2.4rem] w-full">

@@ -37,6 +37,17 @@ export const getProductByName = async (name: string): Promise<Product> => {
   }
 };
 
+export const getProductBySlug = async (slug: string): Promise<Product> => {
+  try {
+    const response: AxiosResponse<Product> = await axiosClient.get(
+      `/products/search?slug=${slug}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getProductItemBySlug = async (
   slug: string
 ): Promise<ProductItem> => {
@@ -49,12 +60,12 @@ export const getProductItemBySlug = async (
   }
 };
 
-export const getProductItemsByProductName = async (
-  name: string
+export const getProductItemsByProductSlug = async (
+  slug: string
 ): Promise<ProductItem[]> => {
   try {
     const response: AxiosResponse<ApiResponse<ProductItem[]>> =
-      await axiosClient.get(`/productItems?productName=${name}`);
+      await axiosClient.get(`/productItems?productSlug=${slug}`);
     return response.data.data;
   } catch (error) {
     throw error;
