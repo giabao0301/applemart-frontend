@@ -40,9 +40,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
 
   return (
     <li key={product.id}>
-      <Link
-        href={`/${product.parentCategory}/${product.category}/${product.slug}`}
-      >
+      <Link href={`/${product.parentCategory}/${product.slug}`}>
         <div className="flex flex-col h-[29.4117647059rem] overflow-hidden p-8 transition-all duration-300 ease-ease cursor-pointer w-72 bg-white rounded-[18px] shadow-product-card mr-5 mb-12 hover:shadow-product-card-hover hover:scale-101">
           <div className="my-0 mx-auto min-h-[13.5294117647rem] pb-0 pt-[2.4rem] w-full">
             <Image

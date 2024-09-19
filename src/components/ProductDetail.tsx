@@ -3,38 +3,35 @@ import {
   getProductItemsByProductSlug,
   getVariationOptionsByProductId,
 } from "@/services/productService";
-import { Option, Product, Variation } from "@/types/product";
+import {
+  Configuration,
+  Option,
+  Product,
+  ProductItem,
+  Variation,
+} from "@/types/product";
 import { Button } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import formatPrice from "@/utils/priceFormatter";
+import { useRouter } from "next/navigation";
 import slugify from "@/utils/slugConverter";
-import { useSearchParams, useRouter } from "next/navigation";
 
 interface Props {
   product: Product;
+  slug?: string;
 }
-const queryKeyMap: Record<string, string> = {
-  Màu: "color",
-  RAM: "ram",
-  "Ổ cứng": "ssd",
-  "Dung lượng lưu trữ": "storage",
-};
 
-const ProductDetail: React.FC<Props> = ({ product }) => {
-  const searchParams = useSearchParams();
+interface SelectedOptions {
+  [key: string]: string;
+}
+
+const ProductDetail: React.FC<Props> = ({ product, slug }) => {
+  console.log("rendering product detail");
+
   const router = useRouter();
-
-  const selectedOptions = Object.fromEntries(searchParams.entries());
-
-  const displayOptions = Object.keys(selectedOptions).reduce((acc, key) => {
-    const decodedKey = decodeURIComponent(key);
-    const friendlyKey = queryKeyMap[decodedKey] || decodedKey;
-    const decodedValue = decodeURIComponent(selectedOptions[key]);
-    acc[friendlyKey] = decodedValue;
-    return acc;
-  }, {} as Record<string, string>);
+  const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
 
   const { isPending, error, data } = useQuery({
     queryKey: ["variationOptions", product.id],
@@ -44,12 +41,20 @@ const ProductDetail: React.FC<Props> = ({ product }) => {
   const productItemsQuery = useQuery({
     queryKey: ["productItems", product.slug],
     queryFn: () => getProductItemsByProductSlug(product.slug),
+    enabled: !!product.slug,
   });
 
   const productItems = useMemo(
     () => productItemsQuery.data || [],
     [productItemsQuery.data]
   );
+
+  const productItem = useMemo(
+    () => productItems.find((item: ProductItem) => item.slug === slug),
+    [productItems, slug]
+  );
+
+  console.log("productItem", productItem);
 
   const variations = useMemo(() => data || [], [data]);
 
@@ -75,6 +80,14 @@ const ProductDetail: React.FC<Props> = ({ product }) => {
     [variations]
   );
 
+  const optionNames = useMemo(
+    () =>
+      variations
+        .map((variation) => variation.name)
+        .filter((value, index, self) => self.indexOf(value) === index),
+    [variations]
+  );
+
   const groupedVariations = useMemo(() => {
     return options.reduce((acc: Variation[], curr: Option) => {
       const existing = acc.find((item) => item.name === curr.name);
@@ -87,44 +100,60 @@ const ProductDetail: React.FC<Props> = ({ product }) => {
     }, []);
   }, [options]);
 
-  const productNameWithSelectedOptions = useMemo(() => {
-    let productName = product.name;
+  useEffect(() => {
+    const initialOptions: SelectedOptions = {};
 
-    for (const value of Object.values(displayOptions)) {
-      productName += ` ${value}`;
-    }
+    if (!productItem) return;
 
-    return productName;
-  }, [product.name, displayOptions]);
+    productItem.configurations.forEach((config: Configuration) => {
+      initialOptions[config.variationOption.name] =
+        config.variationOption.value;
+    });
 
-  const selectedProductItem = useMemo(() => {
-    const slug = slugify(productNameWithSelectedOptions);
-    return productItems.find((item) => item.slug === slug);
-  }, [productNameWithSelectedOptions, productItems]);
+    setSelectedOptions(initialOptions);
+  }, [productItem]);
 
-  const updateQueryParams = (name: string, value: string) => {
-    const params = new URLSearchParams(searchParams);
-    const friendlyKey = Object.keys(queryKeyMap).find(
-      (key) => queryKeyMap[key] === name
+  useEffect(() => {
+    if (Object.keys(selectedOptions).length === 0) return;
+
+    const isAllOptionsSelected = optionNames.every(
+      (name) => selectedOptions[name]
     );
-    params.set(friendlyKey || name, value);
-    router.push(`?${params.toString()}`);
-  };
 
-  const image = selectedProductItem
-    ? selectedProductItem.imageUrl
-    : product.images[0].url;
-  const price = selectedProductItem
-    ? selectedProductItem.price
-    : product.lowestPrice;
+    if (isAllOptionsSelected) {
+      const slug = slugify(Object.values(selectedOptions).join(" "));
+      const timeout = setTimeout(() => {
+        router.push(`/${product.parentCategory}/${product.slug}/${slug}`);
+      }, 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [
+    optionNames,
+    product.parentCategory,
+    product.slug,
+    router,
+    selectedOptions,
+  ]);
 
-  if (isPending) return <div>Loading...</div>;
+  const handleOptionSelect = useCallback(
+    (name: string, value: string) => {
+      if (selectedOptions[name] === value) return;
 
-  if (error) return <div>Error fetching product items</div>;
+      setSelectedOptions((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    },
+    [setSelectedOptions, selectedOptions]
+  );
 
-  if (productItemsQuery.isLoading) return <div>Loading...</div>;
+  const image = productItem ? productItem.imageUrl : product.images[0].url;
+  const price = productItem ? productItem.price : product.lowestPrice;
 
-  if (productItemsQuery.error) return <div>Error fetching product items</div>;
+  if (isPending || productItemsQuery.isLoading) return <div>Loading...</div>;
+
+  if (error || productItemsQuery.error)
+    return <div>Error fetching product items</div>;
 
   return (
     <div className="flex flex-wrap mb-[50px] mx-auto w-[912px]">
@@ -170,10 +199,8 @@ const ProductDetail: React.FC<Props> = ({ product }) => {
       </div>
       <div className="flex flex-col justify-between basis-[45.83333%] max-w-[45.83333%]">
         <div className="min-h-28">
-          {selectedProductItem ? (
-            <h1 className="text-3xl font-semibold">
-              {selectedProductItem.sku}
-            </h1>
+          {productItem ? (
+            <h1 className="text-3xl font-semibold">{productItem.sku}</h1>
           ) : (
             <h1 className="text-4xl font-semibold">{product.name}</h1>
           )}
@@ -188,10 +215,10 @@ const ProductDetail: React.FC<Props> = ({ product }) => {
                 {colors.map((color) => (
                   <li
                     key={color.id}
-                    className={`rounded-full cursor-pointer ${
-                      selectedOptions.Màu === color.value && "border-2"
-                    } border-[#0071e3]`}
-                    onClick={() => updateQueryParams("Màu", color.value)}
+                    className={`rounded-full cursor-pointer border-2  ${
+                      selectedOptions.Màu === color.value && "border-[#0071e3]"
+                    }`}
+                    onClick={() => handleOptionSelect("Màu", color.value)}
                   >
                     <Image
                       width={30}
@@ -214,12 +241,13 @@ const ProductDetail: React.FC<Props> = ({ product }) => {
                   {variation.options.map((option) => (
                     <li
                       key={option.id}
-                      className={`rounded-lg p-2 cursor-pointer ${
+                      className={`rounded-lg p-2 cursor-pointer border-2 ${
                         selectedOptions[variation.name] === option.value &&
-                        "border-2"
-                      } border-[#0071e3]`}
+                        "border-[#0071e3]"
+                      }
+                      `}
                       onClick={() =>
-                        updateQueryParams(variation.name, option.value)
+                        handleOptionSelect(variation.name, option.value)
                       }
                     >
                       {option.value}
