@@ -1,79 +1,53 @@
+"use client";
 import ProductDetail from "@/components/ProductDetail";
 import {
   getProductBySlug,
-  getProductItemBySlug,
   getProductItemsByProductSlug,
 } from "@/services/productService";
 import { Product, ProductItem } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
 import { useMemo } from "react";
 
-export async function generateStaticParams({
-  params,
-}: {
-  params: { product: string; slug: string };
-}) {
-  const productSlug = decodeURIComponent(params.product);
-
-  const productItems: ProductItem[] = await getProductItemsByProductSlug(
-    productSlug
-  );
-
-  return productItems.map((productItem) => ({
-    params: {
-      slug: productItem.slug.replace(`${productSlug}-`, ""),
-    },
-  }));
-}
-
-const Page = async ({
-  params,
-}: {
-  params: { product: string; slug: string };
-}) => {
+const Page = ({ params }: { params: { product: string; slug: string } }) => {
   const productSlug = decodeURIComponent(params.product);
   const slug = decodeURIComponent(`${params.product}-${params.slug}`);
 
   console.log("slug", slug);
 
-  const fetchProduct = async () => {
-    const product = await getProductBySlug(productSlug);
-    return product;
-  };
+  const { data, isPending, isError } = useQuery({
+    queryKey: ["product", productSlug],
+    queryFn: () => getProductBySlug(productSlug),
+    enabled: !!productSlug,
+  });
 
-  const product: Product = await fetchProduct();
+  const product = useMemo(() => data || ({} as Product), [data]);
 
-  // const {
-  //   data: product,
-  //   isPending,
-  //   isError,
-  // } = useQuery({
-  //   queryKey: ["product", productSlug],
-  //   queryFn: () => getProductBySlug(productSlug),
-  //   enabled: !!productSlug,
-  // });
+  const productItemsQuery = useQuery({
+    queryKey: ["productItems", product.slug],
+    queryFn: () => getProductItemsByProductSlug(product.slug),
+    enabled: !!product.slug,
+  });
 
-  // const productItemQuery = useQuery({
-  //   queryKey: ["productItem", slug],
-  //   queryFn: () => getProductItemBySlug(slug),
-  //   enabled: !!slug,
-  // });
+  const productItems = useMemo(
+    () => productItemsQuery.data || [],
+    [productItemsQuery.data]
+  );
 
-  // const productItem = useMemo(
-  //   () => productItemQuery.data,
-  //   [productItemQuery.data]
-  // );
+  const productItem = useMemo(
+    () => productItems.find((item: ProductItem) => item.slug === slug),
+    [productItems, slug]
+  );
 
-  // if (isPending) return <div>Loading...</div>;
+  if (!productItem) return <div>Not found</div>;
 
-  // if (isError) return <div>Error fetching product</div>;
+  console.log("productItem", productItem);
 
-  // if (productItemQuery.isPending) return <div>Loading product item...</div>;
+  if (isPending || productItemsQuery.isPending) return <div>Loading...</div>;
 
-  // if (productItemQuery.isError) return <div>Error fetching product item</div>;
+  if (isError || productItemsQuery.isError)
+    return <div>Error fetching product</div>;
 
-  return <ProductDetail product={product} slug={slug} />;
+  return <ProductDetail product={product} productItem={productItem} />;
 };
 
 export default Page;

@@ -1,8 +1,5 @@
 "use client";
-import {
-  getProductItemsByProductSlug,
-  getVariationOptionsByProductId,
-} from "@/services/productService";
+import { getVariationOptionsByProductId } from "@/services/productService";
 import {
   Configuration,
   Option,
@@ -15,19 +12,19 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import formatPrice from "@/utils/priceFormatter";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import slugify from "@/utils/slugConverter";
 
 interface Props {
   product: Product;
-  slug?: string;
+  productItem?: ProductItem;
 }
 
 interface SelectedOptions {
   [key: string]: string;
 }
 
-const ProductDetail: React.FC<Props> = ({ product, slug }) => {
+const ProductDetail: React.FC<Props> = ({ product, productItem }) => {
   console.log("rendering product detail");
 
   const router = useRouter();
@@ -37,24 +34,6 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
     queryKey: ["variationOptions", product.id],
     queryFn: () => getVariationOptionsByProductId(product.id),
   });
-
-  const productItemsQuery = useQuery({
-    queryKey: ["productItems", product.slug],
-    queryFn: () => getProductItemsByProductSlug(product.slug),
-    enabled: !!product.slug,
-  });
-
-  const productItems = useMemo(
-    () => productItemsQuery.data || [],
-    [productItemsQuery.data]
-  );
-
-  const productItem = useMemo(
-    () => productItems.find((item: ProductItem) => item.slug === slug),
-    [productItems, slug]
-  );
-
-  console.log("productItem", productItem);
 
   const variations = useMemo(() => data || [], [data]);
 
@@ -122,10 +101,7 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
 
     if (isAllOptionsSelected) {
       const slug = slugify(Object.values(selectedOptions).join(" "));
-      const timeout = setTimeout(() => {
-        router.push(`/${product.parentCategory}/${product.slug}/${slug}`);
-      }, 300);
-      return () => clearTimeout(timeout);
+      router.push(`/${product.parentCategory}/${product.slug}/${slug}`);
     }
   }, [
     optionNames,
@@ -149,11 +125,6 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
 
   const image = productItem ? productItem.imageUrl : product.images[0].url;
   const price = productItem ? productItem.price : product.lowestPrice;
-
-  if (isPending || productItemsQuery.isLoading) return <div>Loading...</div>;
-
-  if (error || productItemsQuery.error)
-    return <div>Error fetching product items</div>;
 
   return (
     <div className="flex flex-wrap mb-[50px] mx-auto w-[912px]">
