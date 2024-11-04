@@ -1,18 +1,16 @@
 "use client";
 import ProductDetail from "@/components/ProductDetail";
-import {
-  getProductBySlug,
-  getProductItemsByProductSlug,
-} from "@/services/productService";
+import { getProductBySlug } from "@/services/productService";
 import { Product, ProductItem } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
+import { error } from "console";
 import { useMemo } from "react";
 
 const Page = ({ params }: { params: { product: string; slug: string } }) => {
   const productSlug = decodeURIComponent(params.product);
   const slug = decodeURIComponent(`${params.product}-${params.slug}`);
 
-  const { data, isPending, isError } = useQuery({
+  const { data, isPending, error } = useQuery({
     queryKey: ["product", productSlug],
     queryFn: () => getProductBySlug(productSlug),
     enabled: !!productSlug,
@@ -22,7 +20,7 @@ const Page = ({ params }: { params: { product: string; slug: string } }) => {
 
   if (isPending) return <div>Loading...</div>;
 
-  if (isError) return <div>Error fetching product</div>;
+  if (error) throw new Error("Error fetching product: " + error.message);
 
   return <ProductDetail product={product} slug={slug} />;
 };

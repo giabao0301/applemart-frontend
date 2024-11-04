@@ -16,37 +16,30 @@ import { AccountIcon } from "@/assets/icons/AccountIcon";
 import { SearchIcon } from "@/assets/icons/SearchIcon";
 import { isAuthenticated, logout } from "@/services/authService";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUserInfo } from "@/services/userService";
 import { Skeleton } from "./ui/skeleton";
 import { User } from "@/types/user";
-import { set } from "zod";
 
 type ProfileProps = {
   isMenuOpen: boolean;
 };
 
 const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
-  const isAuthed: boolean = isAuthenticated();
-
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (isAuthed) {
-      setIsLoggedIn(true);
-      setIsLoading(false);
-    }
-
-    setIsLoading(false);
-  }, [isAuthed]);
-
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const { error, data, isFetching } = useQuery({
+  const {
+    data: user,
+    isLoading,
+    isFetching,
+    error,
+  } = useQuery<User | null>({
     queryKey: ["user"],
-    queryFn: getUserInfo,
-    enabled: !!isLoggedIn,
+    queryFn: async () => {
+      const authenticated = await isAuthenticated();
+      return authenticated ? getUserInfo() : null;
+    },
   });
 
   if (isLoading || isFetching) {
@@ -65,11 +58,10 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
       </NavbarContent>
     );
   }
-  const user: User | undefined = data;
 
   const logoutHandler = () => {
     logout();
-    setIsLoggedIn(false);
+    queryClient.invalidateQueries({ queryKey: ["user"] });
     router.push("/login");
   };
 
@@ -78,7 +70,7 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
       <NavbarContent as="div" justify="end" className="hidden lg:flex">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            {isLoggedIn && user ? (
+            {user ? (
               <Avatar
                 as="button"
                 className="transition-transform w-7 h-7"
@@ -98,7 +90,7 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
             )}
           </DropdownTrigger>
 
-          {isLoggedIn && user ? (
+          {user ? (
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem
                 key="profile"
@@ -109,13 +101,13 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
                 <p className="font-semibold">Xin chào,</p>
                 <p className="font-semibold">{user.fullName}</p>
               </DropdownItem>
-              <DropdownItem href="/account" key="account">
+              <DropdownItem href="/user/account/profile" key="account">
                 Tài khoản
               </DropdownItem>
-              <DropdownItem href="/cart" key="cart">
+              <DropdownItem href="/user/cart" key="cart">
                 Giỏ hàng
               </DropdownItem>
-              <DropdownItem href="/saved" key="saved">
+              <DropdownItem href="/user/saved" key="saved">
                 Mục đã lưu
               </DropdownItem>
               <DropdownItem
@@ -148,7 +140,7 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
       </NavbarContent>
 
       <NavbarMenu>
-        {isLoggedIn ? (
+        {user ? (
           <>
             <NavbarMenuItem>
               <Link

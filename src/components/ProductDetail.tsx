@@ -1,5 +1,5 @@
 "use client";
-import { getProductItemsByProductSlug } from "@/services/productService";
+import { getProductItemsByProductId } from "@/services/productService";
 import {
   Configuration,
   Option,
@@ -17,6 +17,7 @@ import slugify from "@/utils/slugConverter";
 import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
 import ColorSelector from "./ColorSelector";
 import OptionSelector from "./OptionSelector";
+import ImageCarousel from "./ImageCarousel";
 
 interface Props {
   product: Product;
@@ -35,9 +36,9 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
 
   const productItemsQuery = useQuery({
-    queryKey: ["productItems", product.slug],
-    queryFn: () => getProductItemsByProductSlug(product.slug),
-    enabled: !!product.slug,
+    queryKey: ["productItems", product.id],
+    queryFn: () => getProductItemsByProductId(product.id),
+    enabled: !!product.id,
     staleTime: 0,
   });
 
@@ -116,7 +117,9 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
     );
     if (isAllOptionsSelected) {
       const slug = slugify(Object.values(selectedOptions).join(" "));
-      router.replace(`/${product.parentCategory}/${product.slug}/${slug}`);
+      router.replace(
+        `/store/${product.parentCategory}/${product.slug}/${slug}`
+      );
     }
   }, [
     optionNames,
@@ -169,22 +172,32 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
   const price = productItem ? productItem.price : product.lowestPrice;
   const quantityInStock = productItem ? productItem.quantity : 0;
 
+  const images = [];
+  images.push(image);
+  product.images.slice(1).forEach((img) => images.push(img.url));
+
+  console.log(images);
+
   if (productItemsQuery.isPending) return <div>Loading...</div>;
   if (productItemsQuery.error) return <div>Error fetching product items</div>;
 
   return (
     <div className="flex flex-wrap mb-[50px] mx-auto w-[980px]">
       <div className="basis-[45.83333%] max-w-[45.83333%] mr-[8.33333%]">
-        <Image
-          className="w-auto h-auto"
-          src={image}
-          alt=""
-          width={514}
-          height={477}
-          quality={100}
-          priority
-        />
+        <ImageCarousel images={images} />
         <ul className="flex justify-between">
+          <li>
+            <Image
+              className="w-auto h-auto"
+              src={image}
+              alt=""
+              width={67}
+              height={67}
+              quality={100}
+              unoptimized={true}
+              priority
+            />
+          </li>
           {product.images.slice(1).map((image) => (
             <li key={image.id}>
               <Image
@@ -194,7 +207,8 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
                 width={67}
                 height={67}
                 quality={100}
-                loading="lazy"
+                unoptimized={true}
+                priority
               />
             </li>
           ))}
@@ -203,7 +217,7 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
       <div className="flex flex-col justify-between basis-[45.83333%] max-w-[45.83333%]">
         <div className="min-h-20">
           {productItem ? (
-            <h1 className="text-3xl font-semibold">{productItem.sku}</h1>
+            <h1 className="text-3xl font-semibold">{productItem.name}</h1>
           ) : (
             <h1 className="text-4xl font-semibold">{product.name}</h1>
           )}

@@ -4,7 +4,7 @@ import { getProducts } from "@/services/productService";
 import { useQuery } from "@tanstack/react-query";
 import { Product } from "@/types/product";
 import ProductItem from "./ProductItem";
-import SkeletonCard from "./SkeletonCard";
+import { ProductCardSkeleton } from "./Skeleton";
 
 export default function ProductList() {
   const { isPending, error, data } = useQuery({
@@ -16,7 +16,7 @@ export default function ProductList() {
     return (
       <ul className="grid grid-cols-2 lg:grid-cols-4 w-full">
         {Array.from({ length: 4 }).map((_, index) => (
-          <SkeletonCard key={index} />
+          <ProductCardSkeleton key={index} />
         ))}
       </ul>
     );

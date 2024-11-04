@@ -1,12 +1,7 @@
 import axiosClient from "./index";
 import { Category, Option, Product, ProductItem } from "@/types/product";
+import { ApiResponse } from "@/types/apiResponse";
 import { AxiosResponse } from "axios";
-
-interface ApiResponse<T> {
-  status: number;
-  message: string;
-  data: T;
-}
 
 interface PageResponse<T> {
   totalPages: number;
@@ -26,24 +21,13 @@ export const getProducts = async (): Promise<PageResponse<Product>> => {
   }
 };
 
-export const getProductByName = async (name: string): Promise<Product> => {
-  try {
-    const response: AxiosResponse<Product> = await axiosClient.get(
-      `/products/search?name=${name}`
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const getProductBySlug = async (slug: string): Promise<Product> => {
   try {
     const response: AxiosResponse<Product> = await axiosClient.get(
       `/products/search?slug=${slug}`
     );
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     throw error;
   }
 };
@@ -53,19 +37,19 @@ export const getProductItemBySlug = async (
 ): Promise<ProductItem> => {
   try {
     const response: AxiosResponse<ApiResponse<ProductItem>> =
-      await axiosClient.get(`/productItems/${slug}`);
+      await axiosClient.get(`/productItems?slug=${slug}`);
     return response.data.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const getProductItemsByProductSlug = async (
-  slug: string
+export const getProductItemsByProductId = async (
+  id: number
 ): Promise<ProductItem[]> => {
   try {
     const response: AxiosResponse<ApiResponse<ProductItem[]>> =
-      await axiosClient.get(`/productItems?productSlug=${slug}`);
+      await axiosClient.get(`/products/${id}/productItems`);
     return response.data.data;
   } catch (error) {
     throw error;

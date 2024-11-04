@@ -4,6 +4,7 @@ import MainNavigation from "@/components/MainNavigation";
 import Footer from "@/components/Footer";
 import { ReactQueryClientProvider } from "@/components/ReactQueryClientProvider";
 import { Providers } from "./providers";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,9 +27,11 @@ export default function RootLayout({
         <body>
           <Providers>
             <MainNavigation />
+            {/* <NavigationMenuDemo /> */}
             <main className="lg:mt-11 pb-56 min-h-screen bg-[#f5f5f7] max-w-md lg:max-w-full">
               {children}
             </main>
+            <Toaster />
             <Footer />
           </Providers>
         </body>

@@ -4,19 +4,24 @@ import { useQuery } from "@tanstack/react-query";
 import { getCategories } from "@/services/productService";
 import Link from "next/link";
 import Image from "next/image";
+import { CategoryCardSkeleton } from "./Skeleton";
 
 const Categories = () => {
-  const { isPending, data, isError } = useQuery({
+  const { isPending, data, error } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategories,
   });
 
-  if (isPending) return <div>Loading...</div>;
+  if (isPending)
+    return (
+      <div className="w-full pb-[62px] inline-flex pt-3 align-top justify-evenly">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <CategoryCardSkeleton key={index} />
+        ))}
+      </div>
+    );
 
-  if (isError) {
-    console.log("Error fetching categories: ", isError);
-    return <div>Error fetching categories</div>;
-  }
+  if (error) throw new Error(error.message);
 
   const categories = data.filter(
     (category: Category) => category.parentCategory == null
@@ -25,23 +30,27 @@ const Categories = () => {
   console.log(categories);
 
   return (
-    <div className="w-full pb-[62px] inline-flex pt-3 align-top justify-between">
+    <div className="w-full pb-[62px] inline-flex pt-3 align-top justify-evenly">
       {categories.map((category: Category) => (
-        <div className="flex flex-col gap-3" key={category.id}>
+        <Link
+          href={`/${category.urlKey}`}
+          className="flex flex-col gap-3"
+          key={category.id}
+        >
           <Image
-            className="block mx-auto my-0 w-auto h-auto"
+            className="mx-auto my-0"
             src={category.thumbnailUrl}
-            width={78}
-            height={120}
+            width={120}
+            height={78}
             alt=""
+            quality={100}
+            unoptimized={true}
+            loading="lazy"
           />
-          <Link
-            href={`/${category.urlKey}`}
-            className="block text-sm font-semibold text-center text-primary hover:underline"
-          >
+          <p className="block font-semibold text-center text-primary hover:underline">
             {category.name}
-          </Link>
-        </div>
+          </p>
+        </Link>
       ))}
     </div>
   );

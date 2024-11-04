@@ -47,33 +47,33 @@ export default function MainNavigation() {
             Cửa hàng
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname === "/mac"}>
-          <Link color="foreground" href="/mac">
+        <NavbarItem isActive={pathname === "/store/mac"}>
+          <Link color="foreground" href="/store/mac">
             Mac
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname === "/ipad"}>
-          <Link color="foreground" href="/ipad">
+        <NavbarItem isActive={pathname === "/store/ipad"}>
+          <Link color="foreground" href="/store/ipad">
             iPad
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname === "/iphone"}>
-          <Link color="foreground" href="/iphone">
+        <NavbarItem isActive={pathname === "/store/iphone"}>
+          <Link color="foreground" href="/store/iphone">
             iPhone
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname === "/watch"}>
-          <Link color="foreground" href="watch">
+        <NavbarItem isActive={pathname === "/store/watch"}>
+          <Link color="foreground" href="/store/watch">
             Apple Watch
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname === "/airpods"}>
-          <Link color="foreground" href="/airpods">
+        <NavbarItem isActive={pathname === "/store/airpods"}>
+          <Link color="foreground" href="/store/airpods">
             AirPods
           </Link>
         </NavbarItem>
-        <NavbarItem isActive={pathname === "/accessories"}>
-          <Link color="foreground" href="accessories">
+        <NavbarItem isActive={pathname === "/store/accessories"}>
+          <Link color="foreground" href="/store/accessories">
             Phụ kiện
           </Link>
         </NavbarItem>

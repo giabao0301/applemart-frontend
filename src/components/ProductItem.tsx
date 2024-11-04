@@ -5,8 +5,8 @@ import Image from "next/image";
 import { Product } from "@/types/product";
 import { getVariationOptionsByProductId } from "@/services/productService";
 import { useQuery } from "@tanstack/react-query";
-import SkeletonCard from "./SkeletonCard";
 import formatPrice from "@/utils/priceFormatter";
+import { ProductCardSkeleton } from "./Skeleton";
 
 interface ProductProps {
   product: Product;
@@ -18,6 +18,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
     queryFn: () => getVariationOptionsByProductId(product.id),
     staleTime: 1000 * 60 * 5,
   });
+
   const variations = useMemo(() => data || [], [data]);
 
   const colors = useMemo(
@@ -31,7 +32,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
     [variations]
   );
 
-  if (isPending) return <SkeletonCard />;
+  if (isPending) return <ProductCardSkeleton />;
 
   if (error) {
     console.log("Error fetching product items: ", error);
@@ -40,7 +41,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
 
   return (
     <li key={product.id}>
-      <Link href={`/${product.parentCategory}/${product.slug}`}>
+      <Link href={`/store/${product.parentCategory}/${product.slug}`}>
         <div className="flex flex-col h-[29.4117647059rem] overflow-hidden p-8 transition-all duration-300 ease-ease cursor-pointer w-72 bg-white rounded-[18px] shadow-product-card mr-5 mb-12 hover:shadow-product-card-hover hover:scale-101">
           <div className="my-0 mx-auto min-h-[13.5294117647rem] pb-0 pt-[2.4rem] w-full">
             <Image
@@ -49,6 +50,8 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
               alt={product.name}
               width={216}
               height={216}
+              quality={100}
+              unoptimized={true}
               priority
             />
           </div>
@@ -62,6 +65,9 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
                       height={12}
                       src={color.imageUrl}
                       alt={color.value}
+                      quality={100}
+                      unoptimized={true}
+                      priority
                     />
                   </li>
                 ))}

@@ -7,11 +7,14 @@ import { useForm } from "react-hook-form";
 import { LoginFormData } from "@/types/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema } from "@/types/auth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "@/services/authService";
 import { useRouter } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
+import { ApiError } from "@/types/error";
+import { AxiosError } from "axios";
 
-export default function Login() {
+export default function Page() {
   const router = useRouter();
 
   const {
@@ -26,13 +29,31 @@ export default function Login() {
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
+  const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+
       router.replace("/", { scroll: false });
     },
-    onError: (error) => {
-      console.log(error);
+    onError: (error: AxiosError) => {
+      if (
+        (error.response?.data as ApiError).message === "Account does not exist"
+      ) {
+        toast({
+          title: "Đăng nhập thất bại 😕",
+          description: "Tài khoản không tồn tại",
+        });
+      } else if (
+        (error.response?.data as ApiError).message === "Password is incorrect"
+      ) {
+        toast({
+          title: "Đăng nhập thất bại 😕",
+          description: "Mật khẩu không chính xác",
+        });
+      }
     },
   });
 

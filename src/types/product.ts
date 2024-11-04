@@ -14,7 +14,7 @@ interface Product {
 interface ProductItem {
   id: number;
   productName: string;
-  sku: string;
+  name: string;
   quantity: number;
   price: number;
   slug: string;
