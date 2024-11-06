@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Button, Input, Link, Spinner } from "@nextui-org/react";
 import { EyeFilledIcon } from "@/assets/icons/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "@/assets/icons/EyeSlashFilledIcon";
 import { useForm } from "react-hook-form";
@@ -10,9 +9,14 @@ import { SignupSchema } from "@/types/auth";
 import { useMutation } from "@tanstack/react-query";
 import { signup } from "@/services/authService";
 import { useRouter } from "next/navigation";
+import { Button, Input, Spinner } from "@nextui-org/react";
+import Link from "next/link";
 import { InputOTPPattern } from "@/components/InputOTPPattern";
+import { AxiosError } from "axios";
+import { ApiError } from "@/types/error";
+import { toast } from "@/hooks/use-toast";
 
-export default function Page() {
+export default function Signup() {
   const router = useRouter();
 
   const {
@@ -30,16 +34,40 @@ export default function Page() {
   const mutation = useMutation({
     mutationFn: signup,
     onSuccess: () => {
-      // return <InputOTPPattern />;
-      router.replace("/", { scroll: false });
+      router.replace("/verify", { scroll: true });
+      toast({
+        title: "Đã gửi yêu cầu xác thực OTP",
+        description: "Kiểm tra email của bạn để nhận mã OTP.",
+      });
     },
-    onError: (error) => {
-      console.log(error);
+    onError: (error: AxiosError) => {
+      if (
+        (error.response?.data as ApiError).message ===
+        "Email address already in use"
+      ) {
+        toast({
+          title: "Đăng ký thất bại 😕",
+          description: "Email đã được sử dụng",
+        });
+      } else if (
+        (error.response?.data as ApiError).message === "Username already exists"
+      ) {
+        toast({
+          title: "Đăng nhập thất bại 😕",
+          description: "Tên đăng nhập đã tồn tại",
+        });
+      } else {
+        toast({
+          title: "Đăng ký thất bại 😕",
+          description: "Đã xảy ra lỗi",
+        });
+      }
     },
   });
 
   const onSubmit = async (data: SignupFormData) => {
     console.log("signing up...");
+
     mutation.mutate(data);
   };
 
@@ -69,6 +97,17 @@ export default function Page() {
             {...register("email")}
             isInvalid={errors.email ? true : false}
             errorMessage={errors.email?.message}
+          />
+          <Input
+            isRequired
+            isClearable
+            type="text"
+            label="Tên đầy đủ"
+            variant="bordered"
+            className="max-w-xs"
+            {...register("fullName")}
+            isInvalid={errors.fullName ? true : false}
+            errorMessage={errors.fullName?.message}
           />
           <Input
             isRequired

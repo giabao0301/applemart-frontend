@@ -36,7 +36,7 @@ export default function UserLayout({
   }
 
   return (
-    <section className="flex mx-36 my-0 w-full">
+    <section className="flex mx-36 my-0">
       <ul className="flex flex-col gap-6 w-64">
         <Link className="hover:text-[#0070c9]" href="/user/account/profile">
           Hồ sơ

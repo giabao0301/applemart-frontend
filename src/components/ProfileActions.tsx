@@ -52,10 +52,11 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
 
   if (error) {
     console.log("Error fetching user info: ", error);
+    logout();
     return (
-      <NavbarContent as="div" justify="end" className="hidden lg:flex">
-        <Skeleton className="w-7 h-7 rounded-full" />
-      </NavbarContent>
+      <div className="cursor-pointer hover:opacity-75">
+        <AccountIcon />
+      </div>
     );
   }
 

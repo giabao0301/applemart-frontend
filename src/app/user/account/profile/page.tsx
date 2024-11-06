@@ -16,7 +16,6 @@ import { AxiosError } from "axios";
 import { ApiError } from "@/types/error";
 import Image from "next/image";
 import { uploadImage } from "@/services/uploadImageService";
-import { set } from "zod";
 
 const Page = () => {
   const { toast } = useToast();
@@ -79,6 +78,7 @@ const Page = () => {
         setImageUrl(user.profileImageUrl);
         setLoading(false);
       }
+      setLoading(false);
     }
   }, [user, setValue]);
 
@@ -277,19 +277,30 @@ const Page = () => {
               />
               {loading ? (
                 <Spinner size="sm" />
+              ) : imageUrl ? (
+                <Image
+                  src={imageUrl}
+                  className="w-1/4 h-1/4 object-cover"
+                  alt=""
+                  width={50}
+                  height={50}
+                  quality={100}
+                  unoptimized={true}
+                  priority
+                />
               ) : (
-                imageUrl && (
-                  <Image
-                    src={imageUrl}
-                    className="w-1/4 h-1/4 object-cover"
-                    alt=""
-                    width={50}
-                    height={50}
-                    quality={100}
-                    unoptimized={true}
-                    priority
-                  />
-                )
+                <Image
+                  src={
+                    "https://res.cloudinary.com/dipiog2a2/image/upload/v1730909694/blank-profile-picture-973460_640_jm5u6r.png"
+                  }
+                  className="w-1/4 h-1/4 object-cover"
+                  alt=""
+                  width={50}
+                  height={50}
+                  quality={100}
+                  unoptimized={true}
+                  priority
+                />
               )}
             </div>
           </div>

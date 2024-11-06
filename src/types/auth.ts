@@ -17,10 +17,6 @@ export const SignupSchema: ZodType<SignupFormData> = z
         "Tên đăng nhập phải bắt đầu bằng một chữ cái và có độ dài từ 3 đến 16 ký tự, và chỉ được chứa các chữ cái, số, dấu gạch dưới (_), dấu gạch ngang (-), và dấu chấm (.)",
     }),
 
-    phoneNumber: z
-      .string()
-      .length(10, { message: "Số điện thoại không hợp lệ" }),
-
     fullName: z.string().min(3, { message: "Tên phải dài ít nhất 3 ký tự" }),
 
     password: z

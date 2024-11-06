@@ -17,6 +17,16 @@ export const signup = async (data: SignupFormData) => {
   return response;
 };
 
+export const confirmEmail = async (token: string) => {
+  const response = await axiosClient.get(
+    `/auth/registration/confirm?token=${token}`
+  );
+
+  setToken(response.headers["authorization"]);
+
+  return response;
+};
+
 export const login = async (data: LoginFormData) => {
   const response = await axiosClient.post("/auth/login", data);
 
