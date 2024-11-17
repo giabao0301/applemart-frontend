@@ -180,7 +180,7 @@ const Page = () => {
         className="flex flex-col items-center"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="max-w-[652px] w-full pt-8 pb-5 px-0">
+        <div className="max-w-xl w-full pt-8 pb-5 px-0">
           <div className="flex justify-between">
             <div className="flex flex-col justify-around items-center mx-auto gap-6 mb-4">
               <Input
@@ -270,7 +270,7 @@ const Page = () => {
                 id="picture"
                 type="file"
                 label="Ảnh đại diện"
-                labelPlacement="outside-left"
+                labelPlacement="outside"
                 name="profileImageUrl"
                 onChange={changeFormDataHandler}
                 accept="image/*"

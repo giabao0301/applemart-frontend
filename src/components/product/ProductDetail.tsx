@@ -18,6 +18,7 @@ import { MinusIcon, PlusIcon } from "@radix-ui/react-icons";
 import ColorSelector from "./ColorSelector";
 import OptionSelector from "./OptionSelector";
 import ImageCarousel from "./ImageCarousel";
+import { ShoppingCartIcon } from "lucide-react";
 
 interface Props {
   product: Product;
@@ -176,8 +177,6 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
   images.push(image);
   product.images.slice(1).forEach((img) => images.push(img.url));
 
-  console.log(images);
-
   if (productItemsQuery.isPending) return <div>Loading...</div>;
   if (productItemsQuery.error) return <div>Error fetching product items</div>;
 
@@ -274,13 +273,23 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
             <p>sản phẩm có sẵn</p>
           </div>
         </div>
-        <Button
-          type="submit"
-          radius="full"
-          className="w-3/4 bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-lg py-1 px-[15px] focus:outline-none"
-        >
-          Thanh toán
-        </Button>
+        <div className="flex justify-between">
+          <Button
+            type="submit"
+            radius="full"
+            className="bg-white text-[#0070c9] border-1 border-[#42a1ec] shadow-lg text-lg py-1 px-[15px] focus:outline-none"
+          >
+            <ShoppingCartIcon size={20} />
+            Thêm vào giỏ hàng
+          </Button>
+          <Button
+            type="submit"
+            radius="full"
+            className="w-1/2 bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-lg py-1 px-[15px] focus:outline-none"
+          >
+            Mua ngay
+          </Button>
+        </div>
       </div>
     </div>
   );

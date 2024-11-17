@@ -19,12 +19,13 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Button, Spinner } from "@nextui-org/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { confirmEmail } from "@/services/authService";
+import { Button } from "@nextui-org/react";
+import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { ApiError } from "@/types/error";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { PasswordResetRequest } from "@/types/form";
 
 type ConfirmEmailRequest = {
   otp: string;
@@ -38,16 +39,23 @@ const ConfirmTokenSchema = z.object({
 
 export default function Page() {
   const router = useRouter();
+  const { confirmRegistrationEmail, confirmPasswordResetEmail } = useAuth();
+
+  const searchParams = useSearchParams();
+
+  const type = searchParams.get("type");
 
   const mutation = useMutation({
-    mutationFn: (data: ConfirmEmailRequest) => confirmEmail(data.otp),
-    onSuccess: () => {
+    mutationFn: type
+      ? (data: ConfirmEmailRequest) => confirmPasswordResetEmail(data.otp)
+      : (data: ConfirmEmailRequest) => confirmRegistrationEmail(data.otp),
+    onSuccess: (data) => {
       toast({
         title: "Xác nhận email thành công! 🎉",
         description: "Email của bạn đã được xác nhận.",
       });
 
-      router.replace("/", { scroll: true });
+      router.replace(data, { scroll: true });
     },
     onError: (error: AxiosError) => {
       if ((error.response?.data as ApiError).message === "Token not found") {
@@ -82,7 +90,10 @@ export default function Page() {
           name="otp"
           render={({ field }) => (
             <FormItem className="flex flex-col items-center gap-4">
-              <FormLabel>One-Time Password</FormLabel>
+              <FormLabel className="text-xl">Xác thực Email</FormLabel>
+              <FormDescription className="text-md">
+                Vui lòng nhập mã OTP gồm 6 chữ số được gửi đến email của bạn.
+              </FormDescription>
               <FormControl>
                 <div className="bg-slate-200 rounded-lg">
                   <InputOTP maxLength={6} {...field}>
@@ -97,9 +108,7 @@ export default function Page() {
                   </InputOTP>
                 </div>
               </FormControl>
-              <FormDescription>
-                Vui lòng nhập mã OTP gồm 6 chữ số được gửi đến email của bạn.
-              </FormDescription>
+
               <FormMessage />
             </FormItem>
           )}
@@ -114,7 +123,7 @@ export default function Page() {
             {/* {mutation.isPending ? (
               <Spinner color="white" size="sm" />
             ) : ( */}
-            Lưu
+            Xác nhận
             {/* )} */}
           </Button>
         </div>

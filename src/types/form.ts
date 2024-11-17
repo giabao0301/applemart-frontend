@@ -26,6 +26,12 @@ export type ChangePasswordFormData = {
   confirmPassword: string;
 };
 
-export type ResetPasswordFormData = {
+export type PasswordResetRequest = {
   email: string;
+};
+
+export type PasswordResetFormData = {
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
 };

@@ -8,7 +8,7 @@ import { UpdateProfileFormData } from "@/types/form";
 export const getUserInfo = async (): Promise<User> => {
   try {
     const response: AxiosResponse<ApiResponse<User>> = await axiosClient.get(
-      "users/info",
+      "users/profile",
       {
         headers: {
           Authorization: `Bearer ${getToken()}`,

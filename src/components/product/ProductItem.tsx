@@ -6,7 +6,7 @@ import { Product } from "@/types/product";
 import { getVariationOptionsByProductId } from "@/services/productService";
 import { useQuery } from "@tanstack/react-query";
 import formatPrice from "@/utils/priceFormatter";
-import { ProductCardSkeleton } from "./Skeleton";
+import { ProductCardSkeleton } from "../ui/custom-skeletons";
 
 interface ProductProps {
   product: Product;

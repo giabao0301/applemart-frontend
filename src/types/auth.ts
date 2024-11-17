@@ -1,5 +1,11 @@
 import { z, ZodType } from "zod";
-import { ChangePasswordFormData, LoginFormData, SignupFormData } from "./form";
+import {
+  ChangePasswordFormData,
+  LoginFormData,
+  PasswordResetFormData,
+  PasswordResetRequest,
+  SignupFormData,
+} from "./form";
 
 const usernameValidation = new RegExp(/^[a-zA-Z][a-zA-Z0-9._-]{3,16}$/);
 
@@ -47,6 +53,22 @@ export const ChangePasswordSchema: ZodType<ChangePasswordFormData> = z
   .refine((data) => data.currentPassword !== data.newPassword, {
     message: "Mật khẩu mới không được giống mật khẩu cũ",
     path: ["newPassword"],
+  });
+
+export const ResetPasswordSchema: ZodType<PasswordResetRequest> = z.object({
+  email: z.string().email({ message: "Email không hợp lệ" }),
+});
+
+export const NewPasswordSchema: ZodType<PasswordResetFormData> = z
+  .object({
+    newPassword: z
+      .string()
+      .min(8, { message: "Mật khẩu phải dài ít nhất 8 ký tự" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Mật khẩu mới không khớp",
+    path: ["confirmPassword"],
   });
 
 export interface Token {

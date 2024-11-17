@@ -18,8 +18,9 @@ import { isAuthenticated, logout } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUserInfo } from "@/services/userService";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import { User } from "@/types/user";
+import { useAuth } from "@/context/AuthContext";
 
 type ProfileProps = {
   isMenuOpen: boolean;
@@ -27,22 +28,9 @@ type ProfileProps = {
 
 const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const { user, isLoading, logout } = useAuth();
 
-  const {
-    data: user,
-    isLoading,
-    isFetching,
-    error,
-  } = useQuery<User | null>({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const authenticated = await isAuthenticated();
-      return authenticated ? getUserInfo() : null;
-    },
-  });
-
-  if (isLoading || isFetching) {
+  if (isLoading) {
     return (
       <NavbarContent as="div" justify="end" className="hidden lg:flex">
         <Skeleton className="w-7 h-7 rounded-full" />
@@ -50,21 +38,12 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
     );
   }
 
-  if (error) {
-    console.log("Error fetching user info: ", error);
-    logout();
-    return (
-      <div className="cursor-pointer hover:opacity-75">
-        <AccountIcon />
-      </div>
-    );
-  }
-
   const logoutHandler = () => {
     logout();
-    queryClient.invalidateQueries({ queryKey: ["user"] });
     router.push("/login");
   };
+
+  console.log(user);
 
   return (
     <React.Fragment>
@@ -105,7 +84,7 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
               <DropdownItem href="/user/account/profile" key="account">
                 Tài khoản
               </DropdownItem>
-              <DropdownItem href="/user/cart" key="cart">
+              <DropdownItem href="/cart" key="cart">
                 Giỏ hàng
               </DropdownItem>
               <DropdownItem href="/user/saved" key="saved">

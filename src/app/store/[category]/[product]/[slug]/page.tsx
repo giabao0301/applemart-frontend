@@ -1,5 +1,5 @@
 "use client";
-import ProductDetail from "@/components/ProductDetail";
+import ProductDetail from "@/components/product/ProductDetail";
 import { getProductBySlug } from "@/services/productService";
 import { Product, ProductItem } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";

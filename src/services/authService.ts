@@ -1,6 +1,8 @@
 import {
   ChangePasswordFormData,
   LoginFormData,
+  PasswordResetFormData,
+  PasswordResetRequest,
   SignupFormData,
 } from "@/types/form";
 import axiosClient from "./index";
@@ -11,16 +13,6 @@ import { AxiosResponse } from "axios";
 
 export const signup = async (data: SignupFormData) => {
   const response = await axiosClient.post("/auth/signup", data);
-
-  setToken(response.headers["authorization"]);
-
-  return response;
-};
-
-export const confirmEmail = async (token: string) => {
-  const response = await axiosClient.get(
-    `/auth/registration/confirm?token=${token}`
-  );
 
   setToken(response.headers["authorization"]);
 
@@ -54,11 +46,27 @@ export const isAuthenticated = async (): Promise<boolean> => {
       removeToken();
       return false;
     }
-
     return true;
   }
-
   return false;
+};
+
+export const confirmRegistrationEmail = async (token: string) => {
+  const response: AxiosResponse<string> = await axiosClient.get(
+    `/auth/registration/confirm?token=${token}`
+  );
+
+  setToken(response.headers["authorization"]);
+
+  return response.data;
+};
+
+export const confirmPasswordResetEmail = async (token: string) => {
+  const response: AxiosResponse<string> = await axiosClient.get(
+    `/auth/reset-password/confirm?token=${token}`
+  );
+
+  return response.data;
 };
 
 export const changePassword = async (
@@ -75,4 +83,22 @@ export const changePassword = async (
   );
 
   return response.data;
+};
+
+export const requestPasswordReset = async (
+  data: PasswordResetRequest
+): Promise<void> => {
+  await axiosClient.post("/auth/reset-password", data);
+};
+
+export const resetPassword = async (data: PasswordResetFormData) => {
+  await axiosClient.put("/auth/reset-password", data);
+};
+
+export const loginWithGoogle = async () => {
+  const response = await axiosClient.get("/auth/login/oauth2/success");
+
+  setToken(response.headers["authorization"]);
+
+  return response;
 };

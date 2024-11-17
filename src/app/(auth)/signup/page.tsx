@@ -7,17 +7,17 @@ import { SignupFormData } from "@/types/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignupSchema } from "@/types/auth";
 import { useMutation } from "@tanstack/react-query";
-import { signup } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import { Button, Input, Spinner } from "@nextui-org/react";
 import Link from "next/link";
-import { InputOTPPattern } from "@/components/InputOTPPattern";
 import { AxiosError } from "axios";
 import { ApiError } from "@/types/error";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Signup() {
   const router = useRouter();
+  const { signup } = useAuth();
 
   const {
     register,
@@ -53,7 +53,7 @@ export default function Signup() {
         (error.response?.data as ApiError).message === "Username already exists"
       ) {
         toast({
-          title: "Đăng nhập thất bại 😕",
+          title: "Đăng ký thất bại 😕",
           description: "Tên đăng nhập đã tồn tại",
         });
       } else {
@@ -174,7 +174,8 @@ export default function Signup() {
           radius="full"
           className="bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-[18px] py-1 px-[15px] focus:outline-none"
         >
-          {mutation.isPending ? <Spinner color="white" size="sm" /> : "Đăng ký"}
+          {/* {mutation.isPending ? <Spinner color="white" size="sm" /> : "Đăng ký"} */}
+          Đăng ký
         </Button>
       </div>
     </form>

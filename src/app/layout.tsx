@@ -1,9 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import MainNavigation from "@/components/MainNavigation";
-import Footer from "@/components/Footer";
-import { ReactQueryClientProvider } from "@/components/ReactQueryClientProvider";
-import { Providers } from "./providers";
+import MainNavigation from "@/components/layout/MainNavigation";
+import Footer from "@/components/layout/Footer";
+import { Providers, ReactQueryClientProvider } from "./providers";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {

@@ -4,7 +4,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "./ui/carousel";
+} from "../ui/carousel";
 import Image from "next/image";
 
 const ImageCarousel = ({ images }: { images: string[] }) => {
