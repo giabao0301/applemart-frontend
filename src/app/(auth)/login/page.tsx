@@ -18,7 +18,13 @@ import { useAuth } from "@/context/AuthContext";
 export default function Page() {
   const router = useRouter();
 
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.replace("/");
+    }
+  }, [isAuthenticated, router, isLoading]);
 
   const {
     register,

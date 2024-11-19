@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EyeFilledIcon } from "@/assets/icons/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "@/assets/icons/EyeSlashFilledIcon";
 import { useForm } from "react-hook-form";
@@ -17,7 +17,13 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function Signup() {
   const router = useRouter();
-  const { signup } = useAuth();
+  const { signup, isAuthenticated, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.replace("/");
+    }
+  }, [isAuthenticated, router, isLoading]);
 
   const {
     register,
@@ -72,9 +78,9 @@ export default function Signup() {
   };
 
   return (
-    <form className="mt-24" onSubmit={handleSubmit(onSubmit)}>
-      <h1 className="text-3xl text-center font-bold pt-8">Đăng ký</h1>
-      <div className="max-w-[1200px] m-auto w-4/5 pt-8 pb-5 px-0 border-b border-solid border-[#e7e7e8]">
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <h1 className="text-3xl text-center font-bold">Đăng ký</h1>
+      <div className="max-w-[1200px] m-auto w-4/5 pt-8 pb-5 px-0">
         <div className="flex flex-col justify-around items-center max-w-[460px] mx-auto gap-6 mb-4">
           <Input
             isRequired

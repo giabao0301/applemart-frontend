@@ -1,8 +1,9 @@
 "use client";
+import NotFound from "@/app/not-found";
 import ProductDetail from "@/components/product/ProductDetail";
 import { getProductBySlug } from "@/services/productService";
 import { useQuery } from "@tanstack/react-query";
-import { notFound } from "next/navigation";
+import { AxiosError } from "axios";
 
 const Page = ({ params }: { params: { product: string } }) => {
   const productSlug = params.product;
@@ -19,9 +20,13 @@ const Page = ({ params }: { params: { product: string } }) => {
 
   if (isPending) return <div>Loading...</div>;
 
-  if (!product) notFound();
-
-  if (error) throw new Error(error.message);
+  if (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response?.status === 404) {
+      return <NotFound />;
+    }
+    return <div>Something went wrong...</div>;
+  }
 
   return <ProductDetail product={product} />;
 };

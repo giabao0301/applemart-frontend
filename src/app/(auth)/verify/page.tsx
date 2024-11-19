@@ -19,7 +19,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { Button } from "@nextui-org/react";
+import { Button, Spinner } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { ApiError } from "@/types/error";
@@ -83,7 +83,7 @@ export default function Page() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="w-2/3 space-y-6 mx-auto mt-40 max-w-full min-h-screen bg-white"
+        className="w-2/3 space-y-6 mx-auto max-w-full min-h-screen"
       >
         <FormField
           control={form.control}
@@ -120,11 +120,11 @@ export default function Page() {
             radius="full"
             className="bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-[18px] py-1 px-[15px] focus:outline-none"
           >
-            {/* {mutation.isPending ? (
+            {mutation.isPending ? (
               <Spinner color="white" size="sm" />
-            ) : ( */}
-            Xác nhận
-            {/* )} */}
+            ) : (
+              "Xác nhận"
+            )}
           </Button>
         </div>
       </form>

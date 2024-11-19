@@ -1,9 +1,10 @@
 "use client";
+import NotFound from "@/app/not-found";
 import ProductDetail from "@/components/product/ProductDetail";
 import { getProductBySlug } from "@/services/productService";
-import { Product, ProductItem } from "@/types/product";
+import { Product } from "@/types/product";
 import { useQuery } from "@tanstack/react-query";
-import { error } from "console";
+import { AxiosError } from "axios";
 import { useMemo } from "react";
 
 const Page = ({ params }: { params: { product: string; slug: string } }) => {
@@ -20,7 +21,14 @@ const Page = ({ params }: { params: { product: string; slug: string } }) => {
 
   if (isPending) return <div>Loading...</div>;
 
-  if (error) throw new Error("Error fetching product: " + error.message);
+  if (error) {
+    const axiosError = error as AxiosError;
+    if (axiosError.response?.status === 404) {
+      return <NotFound />;
+    }
+
+    return <div>Something went wrong...</div>;
+  }
 
   return <ProductDetail product={product} slug={slug} />;
 };

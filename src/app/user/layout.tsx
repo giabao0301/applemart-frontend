@@ -1,5 +1,7 @@
 "use client";
+import { useAuth } from "@/context/AuthContext";
 import { isAuthenticated } from "@/services/authService";
+import { Spinner } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,32 +13,24 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-
-  const {
-    data: isAuthed,
-    isLoading,
-    isFetching,
-  } = useQuery<boolean>({
-    queryKey: ["authenticated"],
-    queryFn: isAuthenticated,
-  });
+  const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
-    if (isAuthed === false) {
+    if (!isLoading && !isAuthenticated) {
       router.replace("/login");
     }
-  }, [isAuthed, router]);
+  }, [isAuthenticated, router, isLoading]);
 
-  if (isAuthed === undefined) {
-    return;
-  }
-
-  if (isLoading || isFetching) {
-    return <div>Loading...</div>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen -mt-20">
+        <Spinner size="lg" />
+      </div>
+    );
   }
 
   return (
-    <section className="flex mx-36 my-0">
+    <section className="flex my-0">
       <ul className="flex flex-col gap-6 w-64">
         <Link className="hover:text-[#0070c9]" href="/user/account/profile">
           Hồ sơ

@@ -22,14 +22,10 @@ export const getProducts = async (): Promise<PageResponse<Product>> => {
 };
 
 export const getProductBySlug = async (slug: string): Promise<Product> => {
-  try {
-    const response: AxiosResponse<Product> = await axiosClient.get(
-      `/products/search?slug=${slug}`
-    );
-    return response.data;
-  } catch (error: any) {
-    throw error;
-  }
+  const response: AxiosResponse<Product> = await axiosClient.get(
+    `/products/search?slug=${slug}`
+  );
+  return response.data;
 };
 
 export const getProductItemBySlug = async (

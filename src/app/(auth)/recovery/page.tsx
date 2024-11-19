@@ -51,7 +51,7 @@ const Page = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-2/3 space-y-6 mx-auto mt-40 max-w-full min-h-screen bg-white flex flex-col items-center"
+      className="w-2/3 space-y-6 mx-auto mt-8 max-w-full min-h-screen flex flex-col items-center"
     >
       <h1 className="text-2xl font-semibold text-center">Khôi phục mật khẩu</h1>
       <Input

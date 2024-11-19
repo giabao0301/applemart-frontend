@@ -8,7 +8,7 @@ import {
   Variation,
 } from "@/types/product";
 import { Button } from "@nextui-org/react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import formatPrice from "@/utils/priceFormatter";
@@ -19,6 +19,10 @@ import ColorSelector from "./ColorSelector";
 import OptionSelector from "./OptionSelector";
 import ImageCarousel from "./ImageCarousel";
 import { ShoppingCartIcon } from "lucide-react";
+import { addCartItem } from "@/services/cartService";
+import { useAuth } from "@/context/AuthContext";
+import { CartItemRequest } from "@/types/cart";
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   product: Product;
@@ -30,17 +34,28 @@ interface SelectedOptions {
 }
 
 const ProductDetail: React.FC<Props> = ({ product, slug }) => {
-  console.log("rerender");
-
   const router = useRouter();
   const [quantity, setQuantity] = useState<string>("1");
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
+
+  const { user, isAuthenticated } = useAuth();
 
   const productItemsQuery = useQuery({
     queryKey: ["productItems", product.id],
     queryFn: () => getProductItemsByProductId(product.id),
     enabled: !!product.id,
     staleTime: 0,
+  });
+
+  const cartQuery = useMutation({
+    mutationFn: ({ userId, data }: { userId: number; data: CartItemRequest }) =>
+      addCartItem(userId, data),
+    onSuccess: () => {
+      toast({
+        title: "Sản phẩm đã được thêm vào giỏ hàng 🎉",
+        description: "Bạn có thể xem giỏ hàng bất cứ lúc nào",
+      });
+    },
   });
 
   const productItems = useMemo(
@@ -169,9 +184,36 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
     }
   };
 
+  const addCartItemHandler = () => {
+    const isAllOptionsSelected = optionNames.every(
+      (name) => selectedOptions[name]
+    );
+
+    if (!isAllOptionsSelected) {
+      toast({
+        title: "Không thể thêm sản phẩm vào giỏ hàng ❌",
+        description: "Vui lòng chọn đầy đủ các tùy chọn của sản phẩm",
+      });
+      return;
+    }
+
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+
+    cartQuery.mutate({
+      userId: user!.id,
+      data: {
+        productItemId: productItem!.id,
+        quantity: parseInt(quantity),
+      },
+    });
+  };
+
   const image = productItem ? productItem.imageUrl : product.images[0].url;
   const price = productItem ? productItem.price : product.lowestPrice;
-  const quantityInStock = productItem ? productItem.quantity : 0;
+  const quantityInStock = productItem ? productItem.quantityInStock : 0;
 
   const images = [];
   images.push(image);
@@ -275,9 +317,10 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
         </div>
         <div className="flex justify-between">
           <Button
-            type="submit"
+            type="button"
             radius="full"
             className="bg-white text-[#0070c9] border-1 border-[#42a1ec] shadow-lg text-lg py-1 px-[15px] focus:outline-none"
+            onClick={addCartItemHandler}
           >
             <ShoppingCartIcon size={20} />
             Thêm vào giỏ hàng

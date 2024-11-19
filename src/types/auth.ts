@@ -61,6 +61,7 @@ export const ResetPasswordSchema: ZodType<PasswordResetRequest> = z.object({
 
 export const NewPasswordSchema: ZodType<PasswordResetFormData> = z
   .object({
+    email: z.string().email({ message: "Email không hợp lệ" }),
     newPassword: z
       .string()
       .min(8, { message: "Mật khẩu phải dài ít nhất 8 ký tự" }),

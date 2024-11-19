@@ -61,7 +61,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (isAuth) {
         try {
           const userInfo = await getUserInfo();
-          console.log("Fetched User Info:", userInfo);
           setUser(userInfo);
         } catch (error) {
           console.error("Error in fetching user info:", error);
