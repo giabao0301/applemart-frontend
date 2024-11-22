@@ -6,7 +6,7 @@ import {
   SignupFormData,
 } from "@/types/form";
 import axiosClient from "./index";
-import { getToken, removeToken, setToken } from "./localStorageService";
+import { getToken, removeToken, setToken } from "./cookieService";
 import { Token, TokenValidationResponse } from "@/types/auth";
 import { ApiResponse } from "@/types/apiResponse";
 import { AxiosResponse } from "axios";

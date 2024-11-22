@@ -1,10 +1,6 @@
 "use client";
-import { NextUIProvider } from "@nextui-org/react";
-import { AuthProvider } from "@/context/AuthContext";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
-import { CartProvider } from "@/context/CartContext";
 
 export const ReactQueryClientProvider = ({
   children,
@@ -28,13 +24,3 @@ export const ReactQueryClientProvider = ({
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <AuthProvider>
-      <CartProvider>
-        <NextUIProvider>{children}</NextUIProvider>
-      </CartProvider>
-    </AuthProvider>
-  );
-}

@@ -4,7 +4,7 @@ import { getProducts } from "@/services/productService";
 import { useQuery } from "@tanstack/react-query";
 import { Product } from "@/types/product";
 import ProductItem from "./ProductItem";
-import { ProductCardSkeleton } from "../ui/custom-skeletons";
+import { ProductCardSkeleton } from "../ui/custom/custom-skeletons";
 
 export default function ProductList() {
   const { isPending, error, data } = useQuery({

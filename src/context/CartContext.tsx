@@ -19,10 +19,12 @@ type CartContextType = {
   error: string | null;
   getCartItems: (userId: number) => Promise<void>;
   addToCart: (userId: number, data: CartItemRequest) => Promise<void>;
-  updateCartItemQuantity: (
+  syncCartItemWithBackend: (
     userId: number,
-    data: CartItemRequest
-  ) => Promise<void>;
+    productItemId: number,
+    quantity: number
+  ) => void;
+  updateCartItemLocally: (productItemId: number, quantity: number) => void;
   removeCartItem: (
     userId: number,
     data: CartItemDeletionRequest
@@ -65,19 +67,23 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const updateCartItemQuantity = async (
+  const updateCartItemLocally = (productItemId: number, quantity: number) => {
+    setCartItems((prevItems) =>
+      (prevItems ?? []).map((item) =>
+        item.productItem.id === productItemId ? { ...item, quantity } : item
+      )
+    );
+  };
+
+  const syncCartItemWithBackend = async (
     userId: number,
-    data: CartItemRequest
+    productItemId: number,
+    quantity: number
   ) => {
-    setIsLoading(true);
-    setError(null);
     try {
-      await updateCartItem(userId, data);
-      await getCartItems(userId);
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to update cart item.");
-    } finally {
-      setIsLoading(false);
+      await updateCartItem(userId, { productItemId, quantity });
+    } catch (error) {
+      console.error("Failed to sync cart item with backend:", error);
     }
   };
 
@@ -89,7 +95,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     setError(null);
     try {
       await deleteCartItem(userId, data);
-      await getCartItems(userId);
+      await handleGetCartItems(userId);
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to remove cart item.");
     } finally {
@@ -118,7 +124,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
         error,
         getCartItems: handleGetCartItems,
         addToCart,
-        updateCartItemQuantity,
+        updateCartItemLocally,
+        syncCartItemWithBackend,
         removeCartItem,
         clearCart,
       }}

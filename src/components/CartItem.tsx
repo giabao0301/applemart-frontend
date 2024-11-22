@@ -1,34 +1,30 @@
 "use client";
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
+import useDebounce from "@/hooks/use-debounce";
 import { getProductBySlug } from "@/services/productService";
 import type { CartItem } from "@/types/cart";
-import { Product } from "@/types/product";
 import formatPrice from "@/utils/priceFormatter";
 import slugify from "@/utils/slugConverter";
+import { Checkbox } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Delete,
-  DeleteIcon,
-  MinusIcon,
-  PlusIcon,
-  RemoveFormatting,
-} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import QuantityInput from "./QuantityInput";
 
 interface Props {
+  selectedItems: CartItem[];
   item: CartItem;
+  onSelect: (selectedItem: CartItem, selected: boolean) => void;
 }
 
-const CartItem: React.FC<Props> = ({ item }) => {
-  const [quantity, setQuantity] = useState<string>("");
+const CartItem: React.FC<Props> = ({ item, onSelect, selectedItems }) => {
   const [url, setUrl] = useState<string>("");
 
-  useEffect(() => {
-    setQuantity(item.quantity.toString());
-  }, [item.quantity]);
+  const { user } = useAuth();
+  const { removeCartItem } = useCart();
 
-  const quantityInStock = item.productItem.quantityInStock;
   const slug = slugify(item.productItem.productName);
 
   const { data: product, isLoading } = useQuery({
@@ -45,8 +41,6 @@ const CartItem: React.FC<Props> = ({ item }) => {
         product?.parentCategory
       }/${slug}/${item.productItem.slug.substring(slug.length + 1)}`
     );
-
-    console.log(url);
   }, [
     item.productItem.productName,
     item.productItem.slug,
@@ -56,45 +50,28 @@ const CartItem: React.FC<Props> = ({ item }) => {
     url,
   ]);
 
-  const quantityChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === "") {
-      return setQuantity("");
-    }
-
-    const value = parseInt(e.target.value);
-
-    if (value > quantityInStock) {
-      return setQuantity(quantityInStock.toString());
-    } else {
-      return setQuantity(value.toString());
-    }
+  const selectCartItemHandler = (isSelected: boolean) => {
+    onSelect(item, isSelected);
   };
 
-  const changeQuantityHandler = (action: string) => {
-    if (action === "increase") {
-      setQuantity((prev) => {
-        const value = parseInt(prev) + 1;
-        if (value > quantityInStock) return prev;
-        return value.toString();
-      });
-    }
-
-    if (action === "decrease") {
-      setQuantity((prev) => {
-        const value = parseInt(prev) - 1;
-        if (value < 1) return prev;
-        return value.toString();
-      });
-    }
+  const removerCartItemHandler = () => {
+    const productItemId = item.productItem.id;
+    if (!user) return;
+    removeCartItem(user?.id, { productItemId });
   };
 
-  const deleteCartItemHandler = () => {
-    console.log("delete");
-  };
+  const isSelected = selectedItems.some(
+    (selectedItem) => selectedItem.id === item.id
+  );
 
   return (
     <li className="px-8 mt-4 bg-white rounded-lg">
       <div className="flex justify-between items-center">
+        <Checkbox
+          color="primary"
+          isSelected={isSelected}
+          onValueChange={selectCartItemHandler}
+        />
         <Link
           href={url}
           className="flex items-center justify-between w-[29.03811%]"
@@ -114,28 +91,7 @@ const CartItem: React.FC<Props> = ({ item }) => {
         <div>
           <span>{formatPrice(item.productItem.price)}đ</span>
         </div>
-        <div className="flex gap-8">
-          <div className="flex border-2 items-center justify-center space-x-2 rounded-full p-1 w-24 bg-white text-[#222222] shadow-[0_10px_65px_-10px_rgba(0,0,0,0.25)]">
-            <button
-              className="text-gray-500 font-bold text-md hover:opacity-75"
-              onClick={() => changeQuantityHandler("decrease")}
-            >
-              <MinusIcon color="#000" />
-            </button>
-            <input
-              type="number"
-              className="text-center w-6 text-md appearance-none focus:outline-none"
-              value={quantity}
-              onChange={quantityChangeHandler}
-            />
-            <button
-              className="text-gray-500 font-bold text-md hover:opacity-75"
-              onClick={() => changeQuantityHandler("increase")}
-            >
-              <PlusIcon color="#000" />
-            </button>
-          </div>
-        </div>
+        <QuantityInput item={item} />
         <div>
           <span className="text-[#0070c9]">
             {formatPrice(item.productItem.price * item.quantity)}đ
@@ -143,7 +99,7 @@ const CartItem: React.FC<Props> = ({ item }) => {
         </div>
         <div>
           <button
-            onClick={deleteCartItemHandler}
+            onClick={removerCartItemHandler}
             className="hover:text-[#0070c9] hover:opacity-75"
           >
             <span>Xóa</span>

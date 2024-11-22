@@ -1,5 +1,5 @@
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "./input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../input-otp";
 
 export function InputOTPPattern() {
   return (

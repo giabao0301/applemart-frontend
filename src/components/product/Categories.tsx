@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getCategories } from "@/services/productService";
 import Link from "next/link";
 import Image from "next/image";
-import { CategoryCardSkeleton } from "../ui/custom-skeletons";
+import { CategoryCardSkeleton } from "../ui/custom/custom-skeletons";
 
 const Categories = () => {
   const { isPending, data, error } = useQuery({
@@ -47,7 +47,7 @@ const Categories = () => {
             unoptimized={true}
             loading="lazy"
           />
-          <p className="block font-semibold text-center text-primary hover:underline">
+          <p className="block font-semibold text-center text-primaryText hover:underline">
             {category.name}
           </p>
         </Link>

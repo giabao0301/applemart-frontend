@@ -6,7 +6,7 @@ import {
   CartItemDeletionRequest,
   CartItemRequest,
 } from "@/types/cart";
-import { getToken } from "./localStorageService";
+import { getToken } from "./cookieService";
 
 interface PageResponse<T> {
   totalPages: number;

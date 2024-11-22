@@ -43,8 +43,6 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
     router.push("/login");
   };
 
-  console.log(user);
-
   return (
     <React.Fragment>
       <NavbarContent as="div" justify="end" className="hidden lg:flex">

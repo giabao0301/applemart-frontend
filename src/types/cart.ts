@@ -12,7 +12,7 @@ interface CartItemRequest {
 }
 
 interface CartItemDeletionRequest {
-  productItemIds: number[];
+  productItemId: number;
 }
 
 export type { CartItem, CartItemRequest, CartItemDeletionRequest };

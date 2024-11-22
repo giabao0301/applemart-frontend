@@ -6,7 +6,7 @@ import { Product } from "@/types/product";
 import { getVariationOptionsByProductId } from "@/services/productService";
 import { useQuery } from "@tanstack/react-query";
 import formatPrice from "@/utils/priceFormatter";
-import { ProductCardSkeleton } from "../ui/custom-skeletons";
+import { ProductCardSkeleton } from "../ui/custom/custom-skeletons";
 
 interface ProductProps {
   product: Product;
@@ -74,7 +74,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
               </ul>
             </div>
             <div className="mt-0 pt-2">
-              <span className="text-lg font-semibold text-primary line-clamp-2">
+              <span className="text-lg font-semibold text-primaryText line-clamp-2">
                 {product.name}
               </span>
             </div>

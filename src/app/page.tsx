@@ -8,7 +8,7 @@ export default function Home() {
         <h1 className="block lg:inline text-2xl lg:text-5xl font-semibold lg:leading-tight lg:tracking-tight mr-2">
           Apple Mart.
         </h1>
-        <div className="inline text-2xl lg:text-5xl font-semibold lg:leading-tight lg:tracking-tight text-secondary">
+        <div className="inline text-2xl lg:text-5xl font-semibold lg:leading-tight lg:tracking-tight text-secondaryText">
           Nơi tuyệt vời để mua sản phẩm công nghệ mà bạn thích.
         </div>
       </div>

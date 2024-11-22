@@ -48,8 +48,10 @@ const config = {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
       },
       colors: {
-        primary: "#1d1d1f",
-        secondary: "#6e6e73",
+        primary: "#0070c9",
+        primaryText: "#1d1d1f",
+        secondaryText: "#6e6e73",
+        tertiary: "#8e8e93",
         error: "#de071c",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

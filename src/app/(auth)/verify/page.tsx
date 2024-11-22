@@ -25,7 +25,7 @@ import { AxiosError } from "axios";
 import { ApiError } from "@/types/error";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { PasswordResetRequest } from "@/types/form";
+import { Suspense } from "react";
 
 type ConfirmEmailRequest = {
   otp: string;
@@ -37,7 +37,7 @@ const ConfirmTokenSchema = z.object({
   }),
 });
 
-export default function Page() {
+function VerifyPage() {
   const router = useRouter();
   const { confirmRegistrationEmail, confirmPasswordResetEmail } = useAuth();
 
@@ -129,5 +129,13 @@ export default function Page() {
         </div>
       </form>
     </Form>
+  );
+}
+
+export default function VerificationPage() {
+  return (
+    <Suspense>
+      <VerifyPage />
+    </Suspense>
   );
 }

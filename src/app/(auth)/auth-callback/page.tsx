@@ -1,5 +1,5 @@
 "use client";
-import { setToken } from "@/services/localStorageService";
+import { setToken } from "@/services/cookieService";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

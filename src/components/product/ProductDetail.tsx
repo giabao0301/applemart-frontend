@@ -23,6 +23,7 @@ import { addCartItem } from "@/services/cartService";
 import { useAuth } from "@/context/AuthContext";
 import { CartItemRequest } from "@/types/cart";
 import { toast } from "@/hooks/use-toast";
+import { ToastAction } from "../ui/toast";
 
 interface Props {
   product: Product;
@@ -32,6 +33,8 @@ interface Props {
 interface SelectedOptions {
   [key: string]: string;
 }
+
+const order = ["Màu", "RAM", "Ổ cứng"];
 
 const ProductDetail: React.FC<Props> = ({ product, slug }) => {
   const router = useRouter();
@@ -54,6 +57,11 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
       toast({
         title: "Sản phẩm đã được thêm vào giỏ hàng 🎉",
         description: "Bạn có thể xem giỏ hàng bất cứ lúc nào",
+        action: (
+          <ToastAction altText="Cart" onClick={() => router.push("/cart")}>
+            Giỏ hàng
+          </ToastAction>
+        ),
       });
     },
   });
@@ -132,7 +140,13 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
       (name) => selectedOptions[name]
     );
     if (isAllOptionsSelected) {
-      const slug = slugify(Object.values(selectedOptions).join(" "));
+      const sortedOptions: { [key: string]: string } = {};
+      order.forEach((key) => {
+        if (key in selectedOptions) {
+          sortedOptions[key] = selectedOptions[key];
+        }
+      });
+      const slug = slugify(Object.values(sortedOptions).join(" "));
       router.replace(
         `/store/${product.parentCategory}/${product.slug}/${slug}`
       );

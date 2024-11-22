@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import axiosClient from ".";
-import { getToken } from "./localStorageService";
+import { getToken } from "./cookieService";
 import { User } from "@/types/user";
 import { ApiResponse } from "@/types/apiResponse";
 import { UpdateProfileFormData } from "@/types/form";
