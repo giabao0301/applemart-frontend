@@ -1,11 +1,9 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
-import { isAuthenticated } from "@/services/authService";
-import { Spinner } from "@nextui-org/react";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Loading from "../loading";
 
 export default function UserLayout({
   children,
@@ -21,17 +19,9 @@ export default function UserLayout({
     }
   }, [isAuthenticated, router, isLoading]);
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen -mt-20">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
   return (
     <section className="flex my-0">
-      <ul className="flex flex-col gap-6 w-64">
+      <ul className="flex flex-col gap-6 w-1/5">
         <Link className="hover:text-[#0070c9]" href="/user/account/profile">
           Hồ sơ
         </Link>
@@ -45,7 +35,7 @@ export default function UserLayout({
           Thiết lập riêng tư
         </Link>
       </ul>
-      {children}
+      <div className="w-4/5 ">{children}</div>
     </section>
   );
 }

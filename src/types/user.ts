@@ -1,4 +1,4 @@
-import { z, ZodType } from "zod";
+import { boolean, number, string, z, ZodType } from "zod";
 
 type User = {
   id: number;
@@ -14,6 +14,18 @@ type User = {
 type Role = {
   id: number;
   name: string;
+};
+
+type Address = {
+  id: number;
+  recipient: string;
+  phone: string;
+  city: string;
+  district: string;
+  ward: string;
+  address: string;
+  addressType: string;
+  isDeliveryAddress: boolean;
 };
 
 const usernameValidation = new RegExp(/^[a-zA-Z][a-zA-Z0-9._-]{3,16}$/);
@@ -35,4 +47,4 @@ export const UpdateProfileSchema = z.object({
   profileImageUrl: z.string().optional(),
 });
 
-export type { User, Role };
+export type { User, Address, Role };

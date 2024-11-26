@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import formatPrice from "@/utils/priceFormatter";
 import { Alert } from "@/components/ui/custom/AlertDialog";
+import Loading from "../loading";
 
 const Page = () => {
   const router = useRouter();
@@ -62,11 +63,7 @@ const Page = () => {
   }, [selectedItems]);
 
   if (isLoading || isPending) {
-    return (
-      <div className="flex items-center justify-center h-screen -mt-20">
-        <Spinner size="lg" />
-      </div>
-    );
+    return <Loading />;
   }
 
   const selectItemHandler = (selectedItem: cartItem, selected: boolean) => {
@@ -127,6 +124,30 @@ const Page = () => {
         </div>
       ) : (
         <div>
+          <div className="pl-8 pr-4 mt-4 bg-white rounded-lg">
+            <div className="flex justify-between items-center py-2">
+              <Checkbox
+                color="primary"
+                isSelected={selectedItems.length === cartItems?.length}
+                onValueChange={selectAllHandler}
+              />
+              <div className=" w-[29.03811%]">
+                <span className="text-lg pl-2">Sản phẩm</span>
+              </div>
+              <div>
+                <span>Đơn Giá</span>
+              </div>
+              <div>
+                <span>Số lượng</span>
+              </div>
+              <div>
+                <span>Thành tiền</span>
+              </div>
+              <div>
+                <span>Thao tác</span>
+              </div>
+            </div>
+          </div>
           <ul>
             {cartItems?.map((item) => (
               <CartItem
@@ -137,7 +158,7 @@ const Page = () => {
               />
             ))}
           </ul>
-          <div className="mt-8 h-32 bg-white flex justify-between items-center px-9 sticky bottom-0">
+          <div className="mt-8 h-32 bg-white flex justify-between items-center px-8 sticky bottom-0">
             <div>
               <Checkbox
                 color="primary"
@@ -171,6 +192,7 @@ const Page = () => {
                 type="button"
                 radius="full"
                 className="w-full bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-lg py-1 px-[15px] focus:outline-none"
+                onClick={() => router.push("/checkout")}
               >
                 Mua hàng
               </Button>

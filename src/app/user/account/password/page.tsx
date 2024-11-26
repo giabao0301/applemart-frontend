@@ -4,7 +4,6 @@ import { ChangePasswordSchema } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Spinner } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -61,7 +60,7 @@ const Page = () => {
   };
 
   return (
-    <form className="w-2/5  " onSubmit={handleSubmit(onSubmit)}>
+    <form className="w-3/4" onSubmit={handleSubmit(onSubmit)}>
       <h1 className="text-3xl text-center font-bold pt-8">Đổi mật khẩu</h1>
       <div className="max-w-[1200px] m-auto w-4/5 pt-8 pb-5 px-0 border-b border-solid border-[#e7e7e8]">
         <div className="flex flex-col justify-around items-center max-w-[460px] mx-auto gap-6 mb-4">

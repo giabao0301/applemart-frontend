@@ -40,3 +40,15 @@ export const updateProfile = async (
     throw error;
   }
 };
+
+export const deleteAccount = async (id: number): Promise<void> => {
+  try {
+    await axiosClient.delete(`users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};

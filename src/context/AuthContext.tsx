@@ -124,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const handleLoginWithGoogle = useCallback(async () => {
-    await loginWithGoogle();
+    // await loginWithGoogle();
     const userInfo = await getUserInfo();
     setUser(userInfo);
     setIsAuthenticatedState(true);

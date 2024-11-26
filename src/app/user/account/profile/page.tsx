@@ -15,12 +15,18 @@ import { useToast } from "@/hooks/use-toast";
 import { AxiosError } from "axios";
 import { ApiError } from "@/types/error";
 import Image from "next/image";
-import { uploadImage } from "@/services/uploadImageService";
+import {
+  deleteImage,
+  extractPublicId,
+  uploadImage,
+} from "@/services/imageService";
+import Loading from "../../../loading";
 
 const Page = () => {
   const { toast } = useToast();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
+  const [oldImageUrl, setOldImageUrl] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const {
@@ -76,6 +82,7 @@ const Page = () => {
       setValue("profileImageUrl", user.profileImageUrl || "");
       if (user.profileImageUrl) {
         setImageUrl(user.profileImageUrl);
+        setOldImageUrl(user.profileImageUrl);
         setLoading(false);
       }
       setLoading(false);
@@ -108,7 +115,7 @@ const Page = () => {
   });
 
   if (isLoading || isFetching) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {
@@ -136,7 +143,6 @@ const Page = () => {
     const file = e.target.files?.[0];
     if (file) {
       setImageFile(file);
-
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = () => {
@@ -148,14 +154,13 @@ const Page = () => {
   };
 
   const onSubmit = async (data: UpdateProfileFormData) => {
-    console.log(data);
-
     if (imageFile) {
       try {
+        setLoading(true);
         const url = await uploadImage(imageFile);
         setImageUrl(url);
         data.profileImageUrl = url;
-        console.log(url);
+        await deleteImage(extractPublicId(oldImageUrl) as string);
       } catch {
         toast({
           title: "Uh oh! 😕",
@@ -163,6 +168,7 @@ const Page = () => {
         });
         return;
       }
+      setLoading(false);
     }
     if (user) {
       console.log(data);
@@ -171,10 +177,10 @@ const Page = () => {
   };
 
   return (
-    <div className="w-4/5">
+    <div className="bg-white p-6">
       <div className="w-full">
-        <h1>Hồ sơ của tôi</h1>
-        <div>Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
+        <h2 className="text-xl">Hồ sơ của tôi</h2>
+        <div className="pt-2">Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
       </div>
       <form
         className="flex flex-col items-center"
@@ -211,7 +217,7 @@ const Page = () => {
                 type="text"
                 label="Email"
                 variant="bordered"
-                className="max-w-xs mr-4"
+                className=" mr-4"
                 {...register("email")}
                 isInvalid={errors.email ? true : false}
                 errorMessage={errors.email?.message}
@@ -223,7 +229,7 @@ const Page = () => {
                 type="text"
                 label="Số điện thoại"
                 variant="bordered"
-                className="max-w-xs mr-24"
+                className=" mr-24"
                 {...register("phoneNumber")}
                 isInvalid={errors.phoneNumber ? true : false}
                 errorMessage={errors.phoneNumber?.message}
@@ -257,7 +263,7 @@ const Page = () => {
                   radius="full"
                   className="bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-[18px] py-1 px-[15px] focus:outline-none"
                 >
-                  {mutation.isPending ? (
+                  {mutation.isPending || loading ? (
                     <Spinner color="white" size="sm" />
                   ) : (
                     "Lưu"
@@ -280,7 +286,7 @@ const Page = () => {
               ) : imageUrl ? (
                 <Image
                   src={imageUrl}
-                  className="w-1/4 h-1/4 object-cover"
+                  className="w-auto h-auto object-cover"
                   alt=""
                   width={50}
                   height={50}
