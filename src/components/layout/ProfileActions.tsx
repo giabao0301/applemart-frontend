@@ -85,6 +85,9 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
               <DropdownItem href="/cart" key="cart">
                 Giỏ hàng
               </DropdownItem>
+              <DropdownItem href="/user/purchase" key="purchase">
+                Đơn mua
+              </DropdownItem>
               <DropdownItem href="/user/saved" key="saved">
                 Mục đã lưu
               </DropdownItem>

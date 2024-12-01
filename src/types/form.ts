@@ -26,12 +26,11 @@ export type ChangePasswordFormData = {
   confirmPassword: string;
 };
 
-export type PasswordResetRequest = {
+export type Email = {
   email: string;
 };
 
 export type PasswordResetFormData = {
-  email: string;
   newPassword: string;
   confirmPassword: string;
 };

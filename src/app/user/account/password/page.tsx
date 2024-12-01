@@ -54,8 +54,6 @@ const Page = () => {
   });
 
   const onSubmit = async (data: ChangePasswordFormData) => {
-    console.log(data);
-
     mutation.mutate(data);
   };
 

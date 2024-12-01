@@ -20,6 +20,9 @@ function ResetPasswordPage() {
   const { resetPassword } = useAuth();
 
   const email = useSearchParams().get("email");
+  const token = useSearchParams().get("token");
+
+  console.log(email, token);
 
   const {
     register,
@@ -35,10 +38,7 @@ function ResetPasswordPage() {
 
   const mutation = useMutation({
     mutationFn: (data: PasswordResetFormData) =>
-      resetPassword({
-        ...data,
-        email: email as string,
-      }),
+      resetPassword(email as string, data, token as string),
     onSuccess: () => {
       toast({
         title: "Thành công ✅",
@@ -48,7 +48,13 @@ function ResetPasswordPage() {
       router.replace("/login");
     },
     onError: (error: AxiosError) => {
-      if (
+      console.log(error);
+      if ((error.response?.data as ApiError).message === "Token not found") {
+        toast({
+          title: "Uh oh! 😕",
+          description: "Token không hợp lệ",
+        });
+      } else if (
         (error.response?.data as ApiError).message ===
         "New password and current password must be different"
       ) {
@@ -58,17 +64,19 @@ function ResetPasswordPage() {
         });
       } else if (
         (error.response?.data as ApiError).message ===
-        "Current password is incorrect"
+        "Confirm password does not match"
       ) {
         toast({
           title: "Uh oh! 😕",
-          description: "Mật khẩu hiện tại không chính xác",
+          description: "Mật khẩu xác nhận không khớp",
         });
       }
     },
   });
 
   const onSubmit = async (data: PasswordResetFormData) => {
+    console.log(data);
+
     mutation.mutate(data);
   };
 
@@ -77,7 +85,7 @@ function ResetPasswordPage() {
       onSubmit={handleSubmit(onSubmit)}
       className="w-2/3 space-y-6 mx-auto max-w-full min-h-screen flex flex-col items-center"
     >
-      <h1 className="text-2xl font-semibold text-center">Khôi phục mật khẩu</h1>
+      <h1 className="text-2xl font-semibold text-center">Đặt lại mật khẩu</h1>
       <Input
         isRequired
         label="Mật khẩu mới"
@@ -134,7 +142,7 @@ function ResetPasswordPage() {
           radius="full"
           className="bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-[18px] py-1 px-[15px] focus:outline-none"
         >
-          {mutation.isPending ? <Spinner color="white" size="sm" /> : "Lưu"}
+          {mutation.isPending ? <Spinner color="white" size="sm" /> : "Đặt lại"}
         </Button>
       </div>
     </form>

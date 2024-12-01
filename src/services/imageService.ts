@@ -39,18 +39,18 @@ export const deleteImage = async (publicId: string): Promise<void> => {
   }
 };
 
-export const extractPublicId = (url: string): string | null => {
+export const extractPublicId = (url: string): string => {
   try {
     const regex = /\/upload\/(?:v\d+\/)?(.+?)(\.\w+)?$/;
     const match = url.match(regex);
 
     if (match && match[1]) {
-      return match[1]; // Public ID is in the first capturing group
+      return match[1];
     }
 
-    return null; // Return null if no match is found
+    return "";
   } catch (error) {
     console.error("Failed to extract public ID:", error);
-    return null;
+    return "";
   }
 };

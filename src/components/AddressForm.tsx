@@ -1,5 +1,5 @@
 import { Input } from "./ui/input";
-import AddressSelector from "./AddressSelector";
+import LocationSelector from "./LocationSelector";
 import {
   Button,
   Checkbox,
@@ -153,7 +153,7 @@ export function AddressForm({
                     }
                   />
                 </div>
-                <AddressSelector
+                <LocationSelector
                   onSaveSelectedAddress={saveSelectedAddressHandler}
                   data={address}
                 />
@@ -227,6 +227,7 @@ export function AddressForm({
                 </Button>
                 <Button
                   color="primary"
+                  radius="none"
                   onPress={
                     header === "Cập nhật địa chỉ"
                       ? updateAddressHandler

@@ -57,7 +57,7 @@ const CartItem: React.FC<Props> = ({ item, onSelect, selectedItems }) => {
   const removerCartItemHandler = () => {
     const productItemId = item.productItem.id;
     if (!user) return;
-    removeCartItem(user?.id, { productItemId });
+    removeCartItem(user?.id, { productItemIds: [productItemId] });
   };
 
   const isSelected = selectedItems.some(

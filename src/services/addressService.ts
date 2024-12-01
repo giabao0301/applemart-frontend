@@ -18,6 +18,22 @@ export const getAddresses = async () => {
   }
 };
 
+export const getAddressById = async (id: number) => {
+  try {
+    const response: AxiosResponse<ApiResponse<Address>> = await axiosClient.get(
+      `users/addresses/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      }
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const setDefaultAddress = async (addressId: number) => {
   try {
     const response: AxiosResponse<string> = await axiosClient.patch(

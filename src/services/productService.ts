@@ -52,6 +52,16 @@ export const getProductItemsByProductId = async (
   }
 };
 
+export const getProductItemById = async (id: number): Promise<ProductItem> => {
+  try {
+    const response: AxiosResponse<ApiResponse<ProductItem>> =
+      await axiosClient.get(`/productItems/${id}`);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getCategories = async (): Promise<Category[]> => {
   try {
     const response: AxiosResponse<ApiResponse<Category[]>> =

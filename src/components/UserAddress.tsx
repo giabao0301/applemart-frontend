@@ -5,6 +5,7 @@ import { Address as address } from "@/types/user";
 import formatPhoneNumber from "@/utils/phoneNumberFormatter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AddressForm } from "./AddressForm";
+import { useEffect, useState } from "react";
 
 type AddressProps = {
   address: address;
@@ -12,6 +13,7 @@ type AddressProps = {
 
 const UserAddress: React.FC<AddressProps> = ({ address }: AddressProps) => {
   const queryClient = useQueryClient();
+  const [selectedAddress, setSelectedAddress] = useState<address | null>(null);
 
   const mutation = useMutation({
     mutationFn: setDefaultAddress,

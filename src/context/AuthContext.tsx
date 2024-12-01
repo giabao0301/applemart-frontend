@@ -17,16 +17,18 @@ import {
   requestPasswordReset,
   confirmPasswordResetEmail,
   resetPassword,
+  requestEmailVerification,
 } from "@/services/authService";
 import { getUserInfo } from "@/services/userService";
 import {
   ChangePasswordFormData,
+  Email,
   LoginFormData,
   PasswordResetFormData,
-  PasswordResetRequest,
   SignupFormData,
 } from "@/types/form";
 import { User } from "@/types/user";
+import { getAddresses } from "@/services/addressService";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -35,11 +37,16 @@ type AuthContextType = {
   signup: (data: SignupFormData) => Promise<void>;
   login: (data: LoginFormData) => Promise<void>;
   logout: () => void;
+  resendEmailVerification: (email: Email) => Promise<void>;
   confirmRegistrationEmail: (token: string) => Promise<string>;
   confirmPasswordResetEmail: (token: string) => Promise<string>;
   changePassword: (data: ChangePasswordFormData) => Promise<void>;
-  requestPasswordReset: (data: PasswordResetRequest) => Promise<void>;
-  resetPassword: (data: PasswordResetFormData) => Promise<void>;
+  requestPasswordReset: (data: Email) => Promise<void>;
+  resetPassword: (
+    email: string,
+    data: PasswordResetFormData,
+    token: string
+  ) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
 };
 
@@ -74,7 +81,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleSignup = useCallback(async (data: SignupFormData) => {
     await signup(data);
-    setIsAuthenticatedState(true);
   }, []);
 
   const handleLogin = useCallback(async (data: LoginFormData) => {
@@ -88,6 +94,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     logout();
     setIsAuthenticatedState(false);
     setUser(null);
+  }, []);
+
+  const handleResendEmailVerification = useCallback(async (email: Email) => {
+    await requestEmailVerification(email);
   }, []);
 
   const handleConfirmRegistrationEmail = useCallback(async (token: string) => {
@@ -109,16 +119,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     []
   );
 
-  const handleRequestPasswordReset = useCallback(
-    async (data: PasswordResetRequest) => {
-      await requestPasswordReset(data);
-    },
-    []
-  );
+  const handleRequestPasswordReset = useCallback(async (data: Email) => {
+    await requestPasswordReset(data);
+  }, []);
 
   const handleResetPassword = useCallback(
-    async (data: PasswordResetFormData) => {
-      await resetPassword(data);
+    async (email: string, data: PasswordResetFormData, token: string) => {
+      await resetPassword(email, data, token);
     },
     []
   );
@@ -137,6 +144,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     signup: handleSignup,
     login: handleLogin,
     logout: handleLogout,
+    resendEmailVerification: handleResendEmailVerification,
     confirmRegistrationEmail: handleConfirmRegistrationEmail,
     confirmPasswordResetEmail: handleConfirmPasswordResetEmail,
     changePassword: handleChangePassword,

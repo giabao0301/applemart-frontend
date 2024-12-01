@@ -5,8 +5,6 @@ import { isAuthenticated } from "@/services/authService";
 import { Address } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../loading";
-import { Button, useDisclosure } from "@nextui-org/react";
-import { Plus } from "lucide-react";
 import { AddressForm } from "@/components/AddressForm";
 
 const Page = () => {

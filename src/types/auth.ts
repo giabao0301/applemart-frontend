@@ -1,9 +1,9 @@
 import { z, ZodType } from "zod";
 import {
   ChangePasswordFormData,
+  Email,
   LoginFormData,
   PasswordResetFormData,
-  PasswordResetRequest,
   SignupFormData,
 } from "./form";
 
@@ -55,20 +55,19 @@ export const ChangePasswordSchema: ZodType<ChangePasswordFormData> = z
     path: ["newPassword"],
   });
 
-export const ResetPasswordSchema: ZodType<PasswordResetRequest> = z.object({
+export const EmailSchema: ZodType<Email> = z.object({
   email: z.string().email({ message: "Email không hợp lệ" }),
 });
 
 export const NewPasswordSchema: ZodType<PasswordResetFormData> = z
   .object({
-    email: z.string().email({ message: "Email không hợp lệ" }),
     newPassword: z
       .string()
       .min(8, { message: "Mật khẩu phải dài ít nhất 8 ký tự" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Mật khẩu mới không khớp",
+    message: "Mật khẩu xác nhận không khớp",
     path: ["confirmPassword"],
   });
 

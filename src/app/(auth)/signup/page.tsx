@@ -40,11 +40,11 @@ export default function Signup() {
   const mutation = useMutation({
     mutationFn: signup,
     onSuccess: () => {
-      router.replace("/verify", { scroll: true });
       toast({
         title: "Đã gửi yêu cầu xác thực OTP",
         description: "Kiểm tra email của bạn để nhận mã OTP.",
       });
+      router.replace("/verify");
     },
     onError: (error: AxiosError) => {
       if (
@@ -180,8 +180,7 @@ export default function Signup() {
           radius="full"
           className="bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-[18px] py-1 px-[15px] focus:outline-none"
         >
-          {/* {mutation.isPending ? <Spinner color="white" size="sm" /> : "Đăng ký"} */}
-          Đăng ký
+          {mutation.isPending ? <Spinner color="white" size="sm" /> : "Đăng ký"}
         </Button>
       </div>
     </form>

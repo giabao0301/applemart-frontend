@@ -1,7 +1,7 @@
 export default function formatPhoneNumber(input: string) {
   const isValid = /^\d{10}$/.test(input);
   if (!isValid) {
-    return "Invalid input. Please provide a string of 10 digits.";
+    return input;
   }
 
   const countryCode = "+84";

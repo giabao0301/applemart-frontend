@@ -1,5 +1,12 @@
 "use client";
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  use,
+  useEffect,
+} from "react";
 import {
   getCartItems,
   addCartItem,
@@ -12,6 +19,7 @@ import {
   CartItemRequest,
   CartItemDeletionRequest,
 } from "@/types/cart";
+import { useAuth } from "./AuthContext";
 
 type CartContextType = {
   cartItems: CartItem[] | null;
@@ -41,6 +49,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const { isAuthenticated, user } = useAuth();
+
   const handleGetCartItems = useCallback(async (userId: number) => {
     setIsLoading(true);
     setError(null);
@@ -54,12 +64,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      handleGetCartItems(user.id);
+    }
+  }, [handleGetCartItems, isAuthenticated, user]);
+
   const addToCart = async (userId: number, data: CartItemRequest) => {
     setIsLoading(true);
     setError(null);
     try {
       await addCartItem(userId, data);
-      await getCartItems(userId);
+      await handleGetCartItems(userId);
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to add item to cart.");
     } finally {

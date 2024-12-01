@@ -55,7 +55,7 @@ function VerifyPage() {
         description: "Email của bạn đã được xác nhận.",
       });
 
-      router.replace(data, { scroll: true });
+      router.replace(`${data}`);
     },
     onError: (error: AxiosError) => {
       if ((error.response?.data as ApiError).message === "Token not found") {

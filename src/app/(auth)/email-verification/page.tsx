@@ -10,12 +10,13 @@ import { AxiosError } from "axios";
 import { ApiError } from "@/types/error";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { Email } from "@/types/form";
+
 import { EmailSchema } from "@/types/auth";
+import { Email } from "@/types/form";
 
 const Page = () => {
   const router = useRouter();
-  const { requestPasswordReset: resetPassword } = useAuth();
+  const { resendEmailVerification } = useAuth();
 
   const {
     register,
@@ -26,13 +27,13 @@ const Page = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: (data: Email) => resetPassword(data),
+    mutationFn: (data: Email) => resendEmailVerification(data),
     onSuccess: () => {
-      router.replace(`/verify?type=reset-password`, { scroll: true });
       toast({
         title: "Đã gửi yêu cầu xác thực OTP",
         description: "Kiểm tra email của bạn để nhận mã OTP.",
       });
+      router.replace("/verify");
     },
     onError: (error: AxiosError) => {
       if ((error.response?.data as ApiError).status === 404) {
@@ -53,9 +54,7 @@ const Page = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="w-2/3 space-y-6 mx-auto mt-8 max-w-full min-h-screen flex flex-col items-center"
     >
-      <h1 className="text-2xl font-semibold text-center">
-        Đặt lại mật khẩu mật khẩu
-      </h1>
+      <h1 className="text-2xl font-semibold text-center">Xác thực email</h1>
       <Input
         isRequired
         isClearable

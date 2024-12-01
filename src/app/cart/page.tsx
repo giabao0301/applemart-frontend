@@ -14,53 +14,44 @@ import Loading from "../loading";
 
 const Page = () => {
   const router = useRouter();
-  const [selectedItems, setSelectedItems] = useState<cartItem[]>([]);
+  const [selectedCartItems, setSelectedCartItems] = useState<cartItem[]>([]);
   const { isAuthenticated, isLoading, user } = useAuth();
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
-  const {
-    cartItems,
-    isLoading: isPending,
-    clearCart,
-    getCartItems,
-  } = useCart();
+  const { cartItems, isLoading: isPending, clearCart } = useCart();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.replace("/login");
     }
-
-    if (isAuthenticated && user) {
-      getCartItems(user.id);
-    }
-  }, [isAuthenticated, router, isLoading, user, getCartItems]);
+  }, [isAuthenticated, isLoading, router]);
 
   useEffect(() => {
-    const ids = selectedItems.map((item) => item.id);
+    const ids = selectedCartItems.map((item) => item.id);
 
     const newCartItems =
       cartItems?.filter((item) => ids.includes(item.id)) || [];
-    if (JSON.stringify(newCartItems) !== JSON.stringify(selectedItems)) {
-      setSelectedItems(newCartItems);
+    if (JSON.stringify(newCartItems) !== JSON.stringify(selectedCartItems)) {
+      setSelectedCartItems(newCartItems);
     }
-  }, [cartItems, selectedItems]);
+  }, [cartItems, selectedCartItems, setSelectedCartItems]);
 
   useEffect(() => {
-    if (selectedItems) {
+    if (selectedCartItems) {
       setTotalQuantity(
-        selectedItems.reduce((acc, item) => {
+        selectedCartItems.reduce((acc, item) => {
           return acc + item.quantity;
         }, 0)
       );
 
       setTotalAmount(
-        selectedItems.reduce((acc, item) => {
+        selectedCartItems.reduce((acc, item) => {
           return acc + item.quantity * item.productItem.price;
         }, 0)
       );
     }
-  }, [selectedItems]);
+  }, [selectedCartItems]);
 
   if (isLoading || isPending) {
     return <Loading />;
@@ -68,9 +59,9 @@ const Page = () => {
 
   const selectItemHandler = (selectedItem: cartItem, selected: boolean) => {
     if (selected) {
-      setSelectedItems((prev) => [...prev, selectedItem]);
+      setSelectedCartItems((prev) => [...prev, selectedItem]);
     } else {
-      setSelectedItems((prev) =>
+      setSelectedCartItems((prev) =>
         prev.filter(
           (item) => item.productItem.id !== selectedItem.productItem.id
         )
@@ -86,11 +77,18 @@ const Page = () => {
 
   const selectAllHandler = (isSelected: boolean) => {
     if (isSelected && cartItems) {
-      setSelectedItems(cartItems);
+      setSelectedCartItems(cartItems);
     } else {
-      setSelectedItems([]);
+      setSelectedCartItems([]);
     }
   };
+
+  const state = {
+    cartItems: selectedCartItems.map((item) => item.id),
+    userId: user?.id,
+  };
+
+  const serializedState = btoa(JSON.stringify(state));
 
   return (
     <div>
@@ -128,7 +126,7 @@ const Page = () => {
             <div className="flex justify-between items-center py-2">
               <Checkbox
                 color="primary"
-                isSelected={selectedItems.length === cartItems?.length}
+                isSelected={selectedCartItems.length === cartItems?.length}
                 onValueChange={selectAllHandler}
               />
               <div className=" w-[29.03811%]">
@@ -151,7 +149,7 @@ const Page = () => {
           <ul>
             {cartItems?.map((item) => (
               <CartItem
-                selectedItems={selectedItems}
+                selectedItems={selectedCartItems}
                 onSelect={selectItemHandler}
                 key={item.productItem.id}
                 item={item}
@@ -162,7 +160,7 @@ const Page = () => {
             <div>
               <Checkbox
                 color="primary"
-                isSelected={selectedItems.length === cartItems?.length}
+                isSelected={selectedCartItems.length === cartItems?.length}
                 onValueChange={selectAllHandler}
               >
                 <span className="text-lg pl-2">Chọn tất cả</span>
@@ -189,10 +187,13 @@ const Page = () => {
             </div>
             <div className="w-52">
               <Button
+                isDisabled={selectedCartItems.length === 0}
                 type="button"
                 radius="full"
                 className="w-full bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-lg py-1 px-[15px] focus:outline-none"
-                onClick={() => router.push("/checkout")}
+                onClick={() =>
+                  router.push(`/checkout?state=${serializedState}`)
+                }
               >
                 Mua hàng
               </Button>

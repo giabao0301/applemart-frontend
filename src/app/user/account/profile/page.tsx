@@ -21,6 +21,7 @@ import {
   uploadImage,
 } from "@/services/imageService";
 import Loading from "../../../loading";
+import { useAuth } from "@/context/AuthContext";
 
 const Page = () => {
   const { toast } = useToast();
@@ -118,11 +119,6 @@ const Page = () => {
     return <Loading />;
   }
 
-  if (error) {
-    console.log("Error fetching user info: ", error);
-    return <div>Error fetching user info: {error.message}</div>;
-  }
-
   const validateDate = (value: any) => {
     const minDate = new Date("1900-01-01");
     const maxDate = new Date("2099-12-31");
@@ -160,18 +156,19 @@ const Page = () => {
         const url = await uploadImage(imageFile);
         setImageUrl(url);
         data.profileImageUrl = url;
-        await deleteImage(extractPublicId(oldImageUrl) as string);
-      } catch {
+        if (oldImageUrl) {
+          await deleteImage(extractPublicId(oldImageUrl));
+        }
+      } catch (error) {
         toast({
           title: "Uh oh! 😕",
           description: "Có lỗi xảy ra khi tải ảnh lên",
         });
-        return;
+        console.log(error);
       }
       setLoading(false);
     }
     if (user) {
-      console.log(data);
       mutation.mutate({ id: user.id, data });
     }
   };

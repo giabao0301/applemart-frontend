@@ -19,11 +19,11 @@ import ColorSelector from "./ColorSelector";
 import OptionSelector from "./OptionSelector";
 import ImageCarousel from "./ImageCarousel";
 import { ShoppingCartIcon } from "lucide-react";
-import { addCartItem } from "@/services/cartService";
 import { useAuth } from "@/context/AuthContext";
 import { CartItemRequest } from "@/types/cart";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "../ui/toast";
+import { useCart } from "@/context/CartContext";
 
 interface Props {
   product: Product;
@@ -42,6 +42,7 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
 
   const { user, isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
 
   const productItemsQuery = useQuery({
     queryKey: ["productItems", product.id],
@@ -52,7 +53,7 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
 
   const cartQuery = useMutation({
     mutationFn: ({ userId, data }: { userId: number; data: CartItemRequest }) =>
-      addCartItem(userId, data),
+      addToCart(userId, data),
     onSuccess: () => {
       toast({
         title: "Sản phẩm đã được thêm vào giỏ hàng 🎉",

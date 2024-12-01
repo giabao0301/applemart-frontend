@@ -14,6 +14,8 @@ import { ApiError } from "@/types/error";
 import { AxiosError } from "axios";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import { Alert } from "@/components/ui/custom/AlertDialog";
+import { ToastAction } from "@/components/ui/toast";
 
 export default function Page() {
   const router = useRouter();
@@ -48,7 +50,9 @@ export default function Page() {
 
       router.replace("/", { scroll: false });
     },
-    onError: (error: AxiosError) => {
+    onError: (error: AxiosError, variables) => {
+      console.log(variables);
+
       if (
         (error.response?.data as ApiError).message === "Account does not exist"
       ) {
@@ -62,6 +66,21 @@ export default function Page() {
         toast({
           title: "Đăng nhập thất bại 😕",
           description: "Mật khẩu không chính xác",
+        });
+      } else if (
+        (error.response?.data as ApiError).message === "Account is not active"
+      ) {
+        toast({
+          title: "Đăng nhập thất bại 😕",
+          description: "Tài khoản chưa được xác thực",
+          action: (
+            <ToastAction
+              altText="Send OTP"
+              onClick={() => router.push(`/email-verification`)}
+            >
+              Xác thực ngay
+            </ToastAction>
+          ),
         });
       }
     },
