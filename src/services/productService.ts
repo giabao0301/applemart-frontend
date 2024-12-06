@@ -11,10 +11,22 @@ interface PageResponse<T> {
   content: T[];
 }
 
-export const getProducts = async (): Promise<PageResponse<Product>> => {
+export const getProducts = async ({
+  page,
+  size,
+  sort,
+  dir,
+}: {
+  page: number;
+  size: number;
+  sort: string;
+  dir: string;
+}): Promise<PageResponse<Product>> => {
   try {
     const response: AxiosResponse<ApiResponse<PageResponse<Product>>> =
-      await axiosClient.get(`/products`);
+      await axiosClient.get(
+        `/products?page=${page}&size=${size}&sort=${sort}&dir=${dir}`
+      );
     return response.data.data;
   } catch (error) {
     throw error;

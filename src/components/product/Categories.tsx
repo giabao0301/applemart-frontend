@@ -27,8 +27,6 @@ const Categories = () => {
     (category: Category) => category.parentCategory == null
   );
 
-  console.log(categories);
-
   return (
     <div className="w-full pb-[62px] inline-flex pt-3 align-top justify-evenly">
       {categories.map((category: Category) => (

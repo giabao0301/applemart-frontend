@@ -14,7 +14,7 @@ const ImageCarousel = ({ images }: { images: string[] }) => {
         {images.map((image, index) => (
           <CarouselItem key={index} className="pl-0">
             <Image
-              className="w-auto h-auto"
+              className="w-auto h-auto object-cover"
               src={image}
               alt=""
               width={514}

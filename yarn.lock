@@ -751,6 +751,21 @@
     "@react-aria/utils" "3.24.1"
     scroll-into-view-if-needed "3.0.10"
 
+"@nextui-org/pagination@^2.0.36":
+  version "2.0.36"
+  resolved "https://registry.yarnpkg.com/@nextui-org/pagination/-/pagination-2.0.36.tgz#75728369c02b6ecbb4d400f376a8195707612358"
+  integrity sha512-VKs2vMj8dybNzb/WkAMmvFBsxdgBvpVihIA4eXSo2ve7fpcLjIF1iPLHuDgpSyv3h3dy009sQTVo3lVTVT1a6w==
+  dependencies:
+    "@nextui-org/react-utils" "2.0.17"
+    "@nextui-org/shared-icons" "2.0.9"
+    "@nextui-org/shared-utils" "2.0.8"
+    "@nextui-org/use-pagination" "2.0.10"
+    "@react-aria/focus" "3.17.1"
+    "@react-aria/i18n" "3.11.1"
+    "@react-aria/interactions" "3.21.3"
+    "@react-aria/utils" "3.24.1"
+    scroll-into-view-if-needed "3.0.10"
+
 "@nextui-org/popover@2.1.27":
   version "2.1.27"
   resolved "https://registry.npmjs.org/@nextui-org/popover/-/popover-2.1.27.tgz"
@@ -1293,6 +1308,14 @@
   version "2.0.2"
   resolved "https://registry.npmjs.org/@nextui-org/use-measure/-/use-measure-2.0.2.tgz"
   integrity sha512-H/RSPPA9B5sZ10wiXR3jLlYFEuiVnc0O/sgLLQfrb5M0hvHoaqMThnsZpm//5iyS7tD7kxPeYNLa1EhzlQKxDA==
+
+"@nextui-org/use-pagination@2.0.10":
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/@nextui-org/use-pagination/-/use-pagination-2.0.10.tgz#45c029b7f315a3b4c8ced7f0f0681cf45dc85fe1"
+  integrity sha512-PD6M8QKngUnTJfyoGiZrnrfUtA1A9ZVUjmbONO/1kxPuUegv0ZOQeFECPP2h7SFPxsyOceL1T97rg/2YPS247g==
+  dependencies:
+    "@nextui-org/shared-utils" "2.0.8"
+    "@react-aria/i18n" "3.11.1"
 
 "@nextui-org/use-pagination@2.0.9":
   version "2.0.9"

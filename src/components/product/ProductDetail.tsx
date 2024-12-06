@@ -28,15 +28,24 @@ import { useCart } from "@/context/CartContext";
 interface Props {
   product: Product;
   slug?: string;
+  productItem?: ProductItem;
 }
 
 interface SelectedOptions {
   [key: string]: string;
 }
 
-const order = ["Màu", "RAM", "Ổ cứng"];
+const order = [
+  "Kích cỡ",
+  "Màu",
+  "RAM",
+  "Ổ cứng",
+  "Dung lượng lưu trữ",
+  "Kích thước vỏ",
+  "Phiên bản",
+];
 
-const ProductDetail: React.FC<Props> = ({ product, slug }) => {
+const ProductDetail: React.FC<Props> = ({ product, productItem, slug }) => {
   const router = useRouter();
   const [quantity, setQuantity] = useState<string>("1");
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
@@ -72,10 +81,14 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
     [productItemsQuery.data]
   );
 
-  const productItem = useMemo(
+  const memoizedProductItem = useMemo(
     () => productItems.find((item: ProductItem) => item.slug === slug),
     [productItems, slug]
   );
+
+  if (!productItem) {
+    productItem = memoizedProductItem;
+  }
 
   const variations = useMemo(
     () =>
@@ -140,6 +153,7 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
     const isAllOptionsSelected = optionNames.every(
       (name) => selectedOptions[name]
     );
+
     if (isAllOptionsSelected) {
       const sortedOptions: { [key: string]: string } = {};
       order.forEach((key) => {
@@ -149,11 +163,14 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
       });
       const slug = slugify(Object.values(sortedOptions).join(" "));
       router.replace(
-        `/store/${product.parentCategory}/${product.slug}/${slug}`
+        `/store/${product.parentCategory || product.category}/${
+          product.slug
+        }/${slug}`
       );
     }
   }, [
     optionNames,
+    product.category,
     product.parentCategory,
     product.slug,
     router,
@@ -244,7 +261,7 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
         <ul className="flex justify-between">
           <li>
             <Image
-              className="w-auto h-auto"
+              className="w-16 h-16 object-cover"
               src={image}
               alt=""
               width={67}
@@ -257,7 +274,7 @@ const ProductDetail: React.FC<Props> = ({ product, slug }) => {
           {product.images.slice(1).map((image) => (
             <li key={image.id}>
               <Image
-                className="w-auto h-auto"
+                className="w-16 h-16 object-cover"
                 src={image.url}
                 alt=""
                 width={67}
