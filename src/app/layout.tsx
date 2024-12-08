@@ -31,7 +31,6 @@ export default function RootLayout({
             <CartProvider>
               <NextUIProvider>
                 <MainNavigation />
-                {/* <NavigationMenuDemo /> */}
                 <main className="lg:pt-11 lg:px-36 pb-56 min-h-screen bg-[#f5f5f7] max-w-md lg:max-w-full">
                   {children}
                 </main>

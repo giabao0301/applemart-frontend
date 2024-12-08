@@ -35,9 +35,18 @@ export const getProducts = async ({
 
 export const getProductBySlug = async (slug: string): Promise<Product> => {
   const response: AxiosResponse<Product> = await axiosClient.get(
-    `/products/search?slug=${slug}`
+    `/products/slug/${slug}`
   );
   return response.data;
+};
+
+export const getProductByCategory = async (
+  category: string
+): Promise<Product[]> => {
+  const response: AxiosResponse<ApiResponse<Product[]>> = await axiosClient.get(
+    `/products/category/${category}`
+  );
+  return response.data.data;
 };
 
 export const getProductItemBySlug = async (

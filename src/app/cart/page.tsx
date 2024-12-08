@@ -84,7 +84,7 @@ const Page = () => {
   };
 
   const state = {
-    cartItems: selectedCartItems.map((item) => item.id),
+    cartItems: selectedCartItems.map((item) => item.productItem.id),
     userId: user?.id,
   };
 

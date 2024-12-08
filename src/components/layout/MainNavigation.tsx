@@ -7,15 +7,27 @@ import {
   NavbarContent,
   NavbarItem,
   Link,
+  Badge,
 } from "@nextui-org/react";
 import { SearchIcon } from "@/assets/icons/SearchIcon";
 import ProfileActions from "./ProfileActions";
+import { CartIcon } from "@/assets/icons/CartIcon";
+import { useCart } from "@/context/CartContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import Image from "next/image";
 // import { AcmeLogo } from "./AcmeLogo.jsx";
 
 export default function MainNavigation() {
   const pathname = usePathname();
 
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+  const { cartItems } = useCart();
 
   return (
     <Navbar
@@ -48,9 +60,29 @@ export default function MainNavigation() {
           </Link>
         </NavbarItem>
         <NavbarItem isActive={pathname === "/store/mac"}>
-          <Link color="foreground" href="/store/mac">
-            Mac
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <nav className="cursor-pointer ">Mac</nav>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-32">
+              <DropdownMenuItem className="hover:opacity-70 ">
+                <Link
+                  className="text-primaryText text-sm"
+                  href={`/store/macbook-air`}
+                >
+                  MacBook Air
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="hover:opacity-70">
+                <Link
+                  className="text-primaryText text-sm"
+                  href={`/store/macbook-pro`}
+                >
+                  MacBook Pro
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </NavbarItem>
         <NavbarItem isActive={pathname === "/store/ipad"}>
           <Link color="foreground" href="/store/ipad">
@@ -63,7 +95,7 @@ export default function MainNavigation() {
           </Link>
         </NavbarItem>
         <NavbarItem isActive={pathname === "/store/watch"}>
-          <Link color="foreground" href="/store/watch">
+          <Link color="foreground" href="/store/apple-watch">
             Apple Watch
           </Link>
         </NavbarItem>
@@ -73,14 +105,26 @@ export default function MainNavigation() {
           </Link>
         </NavbarItem>
         <NavbarItem isActive={pathname === "/store/accessories"}>
-          <Link color="foreground" href="/store/accessories">
+          <Link color="foreground" href="/store/phu-kien">
             Phụ kiện
           </Link>
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem className="mb-0.5">
           <div className="cursor-pointer hover:opacity-75">
             <SearchIcon />
           </div>
+        </NavbarItem>
+        <NavbarItem className="mt-1">
+          <Badge
+            color="primary"
+            content={cartItems?.length || 0}
+            size="sm"
+            className="mt-[14px] -mr-0.5"
+          >
+            <Link className="cursor-pointer hover:opacity-75" href="/cart">
+              <CartIcon />
+            </Link>
+          </Badge>
         </NavbarItem>
       </NavbarContent>
       <ProfileActions isMenuOpen={isMenuOpen} />

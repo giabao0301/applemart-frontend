@@ -51,7 +51,7 @@ const ProductDetail: React.FC<Props> = ({ product, productItem, slug }) => {
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>({});
 
   const { user, isAuthenticated } = useAuth();
-  const { addToCart } = useCart();
+  const { addToCart, cartItems, getCartItems } = useCart();
 
   const productItemsQuery = useQuery({
     queryKey: ["productItems", product.id],
@@ -60,7 +60,7 @@ const ProductDetail: React.FC<Props> = ({ product, productItem, slug }) => {
     staleTime: 0,
   });
 
-  const cartQuery = useMutation({
+  const cartMutation = useMutation({
     mutationFn: ({ userId, data }: { userId: number; data: CartItemRequest }) =>
       addToCart(userId, data),
     onSuccess: () => {
@@ -72,6 +72,32 @@ const ProductDetail: React.FC<Props> = ({ product, productItem, slug }) => {
             Giỏ hàng
           </ToastAction>
         ),
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Không thể thêm sản phẩm vào giỏ hàng ❌",
+        description: error.message,
+      });
+    },
+  });
+
+  const buyMutation = useMutation({
+    mutationFn: ({ userId, data }: { userId: number; data: CartItemRequest }) =>
+      addToCart(userId, data),
+    onSuccess: () => {
+      const state = {
+        cartItems: [productItem?.id],
+        userId: user?.id,
+      };
+
+      const serializedState = btoa(JSON.stringify(state));
+      router.push(`/checkout?state=${serializedState}`);
+    },
+    onError: (error) => {
+      toast({
+        title: "Không thể mua sản phẩm ❌",
+        description: error.message,
       });
     },
   });
@@ -234,7 +260,7 @@ const ProductDetail: React.FC<Props> = ({ product, productItem, slug }) => {
       return;
     }
 
-    cartQuery.mutate({
+    cartMutation.mutate({
       userId: user!.id,
       data: {
         productItemId: productItem!.id,
@@ -253,6 +279,33 @@ const ProductDetail: React.FC<Props> = ({ product, productItem, slug }) => {
 
   if (productItemsQuery.isPending) return <div>Loading...</div>;
   if (productItemsQuery.error) return <div>Error fetching product items</div>;
+
+  const buyNowHandler = () => {
+    const isAllOptionsSelected = optionNames.every(
+      (name) => selectedOptions[name]
+    );
+
+    if (!isAllOptionsSelected) {
+      toast({
+        title: "Không thể mua sản phẩm ❌",
+        description: "Vui lòng chọn đầy đủ các tùy chọn của sản phẩm",
+      });
+      return;
+    }
+
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+
+    buyMutation.mutate({
+      userId: user!.id,
+      data: {
+        productItemId: productItem!.id,
+        quantity: parseInt(quantity),
+      },
+    });
+  };
 
   return (
     <div className="flex flex-wrap mb-[50px] mx-auto w-[980px]">
@@ -358,9 +411,10 @@ const ProductDetail: React.FC<Props> = ({ product, productItem, slug }) => {
             Thêm vào giỏ hàng
           </Button>
           <Button
-            type="submit"
+            type="button"
             radius="full"
             className="w-1/2 bg-gradient-to-b from-[#42a1ec] to-[#0070c9] text-white shadow-lg text-lg py-1 px-[15px] focus:outline-none"
+            onClick={buyNowHandler}
           >
             Mua ngay
           </Button>

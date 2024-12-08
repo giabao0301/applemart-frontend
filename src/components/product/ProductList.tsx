@@ -1,15 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getProducts } from "@/services/productService";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Product } from "@/types/product";
 import ProductItem from "./ProductItem";
 import { ProductCardSkeleton } from "../ui/custom/custom-skeletons";
 import { Pagination } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 
-export default function ProductList() {
+export default function ProductList({ page }: { page?: string }) {
+  const router = useRouter();
   const [params, setParams] = useState({
-    page: 0,
+    page: page ? parseInt(page) - 1 : 0,
     size: 12,
     sort: "id",
     dir: "asc",
@@ -39,6 +41,7 @@ export default function ProductList() {
 
   const changePageHandler = (page: number) => {
     setParams({ ...params, page: page - 1 });
+    router.push(`/store?page=${page}`);
   };
 
   return (
@@ -53,6 +56,7 @@ export default function ProductList() {
           showControls
           total={pages}
           initialPage={1}
+          page={params.page + 1}
           size="lg"
           onChange={changePageHandler}
         />

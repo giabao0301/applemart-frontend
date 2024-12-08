@@ -54,8 +54,9 @@ const Checkout = () => {
 
         if (decodedState.cartItems && cartItems) {
           const items = cartItems.filter((item) =>
-            decodedState.cartItems.includes(item.id)
+            decodedState.cartItems.includes(item.productItem.id)
           );
+
           setSelectedCartItems(items);
         }
       } catch (err) {
