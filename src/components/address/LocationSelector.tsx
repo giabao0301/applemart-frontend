@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import { Address } from "@/types/user";
 
 type Location = {

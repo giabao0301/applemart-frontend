@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useMemo } from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
@@ -12,7 +12,7 @@ interface ProductProps {
   product: Product;
 }
 
-const ProductItem: React.FC<ProductProps> = ({ product }) => {
+const ProductCard: React.FC<ProductProps> = ({ product }) => {
   const { isPending, error, data } = useQuery({
     queryKey: ["variationOptions", product.id],
     queryFn: () => getVariationOptionsByProductId(product.id),
@@ -42,7 +42,7 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
   return (
     <li key={product.id}>
       <Link
-        href={`/store/${product.parentCategory || product.category}/${
+        href={`/store/${product.category || product.parentCategory}/${
           product.slug
         }`}
       >
@@ -94,4 +94,4 @@ const ProductItem: React.FC<ProductProps> = ({ product }) => {
   );
 };
 
-export default ProductItem;
+export default ProductCard;

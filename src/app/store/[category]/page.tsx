@@ -1,5 +1,5 @@
 "use client";
-import ProductItem from "@/components/product/ProductItem";
+import ProductCard from "@/components/product/ProductCard";
 import { ProductCardSkeleton } from "@/components/ui/custom/custom-skeletons";
 import { getCategories, getProductByCategory } from "@/services/productService";
 import { Product } from "@/types/product";
@@ -45,7 +45,7 @@ const Page = ({ params }: { params: { category: string } }) => {
       </div>
       <ul className="grid grid-cols-2 lg:grid-cols-4 w-full">
         {products?.map((product: Product) => (
-          <ProductItem key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} />
         ))}
       </ul>
     </>

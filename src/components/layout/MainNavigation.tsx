@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import Image from "next/image";
+import SearchDrawer from "../product/SearchDrawer";
 // import { AcmeLogo } from "./AcmeLogo.jsx";
 
 export default function MainNavigation() {
@@ -110,9 +111,7 @@ export default function MainNavigation() {
           </Link>
         </NavbarItem>
         <NavbarItem className="mb-0.5">
-          <div className="cursor-pointer hover:opacity-75">
-            <SearchIcon />
-          </div>
+          <SearchDrawer />
         </NavbarItem>
         <NavbarItem className="mt-1">
           <Badge

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { getProducts } from "@/services/productService";
 import { useQuery } from "@tanstack/react-query";
 import { Product } from "@/types/product";
-import ProductItem from "./ProductItem";
+import ProductCard from "./ProductCard";
 import { ProductCardSkeleton } from "../ui/custom/custom-skeletons";
 import { Pagination } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
@@ -48,7 +48,7 @@ export default function ProductList({ page }: { page?: string }) {
     <>
       <ul className="grid grid-cols-2 lg:grid-cols-4 w-full">
         {products.map((product: Product) => (
-          <ProductItem key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} />
         ))}
       </ul>
       <div className="flex justify-center mt-8">

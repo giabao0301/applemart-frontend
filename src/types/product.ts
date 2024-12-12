@@ -15,10 +15,12 @@ interface ProductItem {
   id: number;
   productName: string;
   name: string;
+  category: string;
   quantityInStock: number;
   price: number;
   slug: string;
   imageUrl: string;
+  releaseYear: number;
   configurations: Array<Configuration>;
   attributes: Array<ProductAttribute>;
 }

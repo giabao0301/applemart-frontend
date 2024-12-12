@@ -189,7 +189,7 @@ const ProductDetail: React.FC<Props> = ({ product, productItem, slug }) => {
       });
       const slug = slugify(Object.values(sortedOptions).join(" "));
       router.replace(
-        `/store/${product.parentCategory || product.category}/${
+        `/store/${product.category || product.parentCategory}/${
           product.slug
         }/${slug}`
       );

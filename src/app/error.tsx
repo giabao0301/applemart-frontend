@@ -14,7 +14,8 @@ export default function Error({
   return (
     <div className="w-full text-center">
       <h1 className="w-[501px] text-5xl mt-24 mx-auto mb-12">
-        {getErrorMessage(error)}
+        {/* {getErrorMessage(error)} */}
+        Đã xảy ra lỗi
       </h1>
       <Link href="/">
         <Button

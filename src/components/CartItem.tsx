@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
-import useDebounce from "@/hooks/use-debounce";
+import useDebounce from "@/hooks/useDebounce";
 import { getProductBySlug } from "@/services/productService";
 import type { CartItem } from "@/types/cart";
 import formatPrice from "@/utils/priceFormatter";
