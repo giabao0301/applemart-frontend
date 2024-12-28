@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import MainNavigation from "@/components/layout/MainNavigation";
-import Footer from "@/components/layout/Footer";
+import MainNavigation from "@/components/landing/layout/MainNavigation";
+import Footer from "@/components/landing/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
-import { NextUIProvider } from "@nextui-org/react";
-import { ReactQueryClientProvider } from "./providers";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,20 +25,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ReactQueryClientProvider>
+        <Providers>
           <AuthProvider>
             <CartProvider>
-              <NextUIProvider>
-                <MainNavigation />
-                <main className="lg:pt-11 lg:px-36 pb-56 min-h-screen bg-[#f5f5f7] max-w-md lg:max-w-full">
-                  {children}
-                </main>
-                <Toaster />
-                <Footer />
-              </NextUIProvider>
+              {children}
+              <Toaster />
             </CartProvider>
           </AuthProvider>
-        </ReactQueryClientProvider>
+        </Providers>
       </body>
     </html>
   );

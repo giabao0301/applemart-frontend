@@ -10,7 +10,7 @@ import {
   signup,
   login,
   logout,
-  isAuthenticated,
+  introspectToken,
   confirmRegistrationEmail,
   changePassword,
   loginWithGoogle,
@@ -19,7 +19,7 @@ import {
   resetPassword,
   requestEmailVerification,
 } from "@/services/authService";
-import { getUserInfo } from "@/services/userService";
+import { getUserProfile } from "@/services/userService";
 import {
   ChangePasswordFormData,
   Email,
@@ -62,13 +62,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const initializeAuth = async () => {
       setIsLoading(true);
-      const isAuth = await isAuthenticated();
+      const isAuth = await introspectToken();
       setIsAuthenticatedState(isAuth);
 
       if (isAuth) {
         try {
-          const userInfo = await getUserInfo();
-          setUser(userInfo);
+          const user = await getUserProfile();
+          console.log("Üser", user);
+
+          setUser(user);
         } catch (error) {
           console.error("Error in fetching user info:", error);
           logout();
@@ -86,8 +88,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const handleLogin = useCallback(async (data: LoginFormData) => {
     await login(data);
     setIsAuthenticatedState(true);
-    const userInfo = await getUserInfo();
-    setUser(userInfo);
+    const user = await getUserProfile();
+    setUser(user);
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -102,8 +104,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleConfirmRegistrationEmail = useCallback(async (token: string) => {
     const res = await confirmRegistrationEmail(token);
-    const userInfo = await getUserInfo();
-    setUser(userInfo);
+    const user = await getUserProfile();
+    setUser(user);
     setIsAuthenticatedState(true);
     return res;
   }, []);
@@ -132,8 +134,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const handleLoginWithGoogle = useCallback(async () => {
     // await loginWithGoogle();
-    const userInfo = await getUserInfo();
-    setUser(userInfo);
+    const user = await getUserProfile();
+    setUser(user);
     setIsAuthenticatedState(true);
   }, []);
 

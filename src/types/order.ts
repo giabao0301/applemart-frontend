@@ -46,3 +46,18 @@ interface OrderCreationResponse {
   vnpayLink: string;
   order: Order;
 }
+
+enum OrderStatus {
+  PENDING = "Chờ xác nhận",
+  PREPARING = "Đang chuẩn bị hàng",
+  DELIVERING = "Đang giao",
+  SUCCESS = "Hoàn thành",
+  CANCELED = "Đã hủy",
+  RETURNED = "Trả hàng",
+}
+
+enum PaymentStatus {
+  PENDING = "Đang chờ",
+  SUCCESS = "Hoàn tất",
+  FAILED = "Thất bại",
+}

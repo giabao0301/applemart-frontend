@@ -71,10 +71,6 @@ export const NewPasswordSchema: ZodType<PasswordResetFormData> = z
     path: ["confirmPassword"],
   });
 
-export interface Token {
-  token: string;
-}
-
 export type TokenValidationResponse = {
   isValid: boolean;
 };

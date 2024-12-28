@@ -1,15 +1,7 @@
 import axiosClient from "./index";
 import { Category, Option, Product, ProductItem } from "@/types/product";
-import { ApiResponse } from "@/types/apiResponse";
+import { ApiResponse, PageResponse } from "@/types/apiResponse";
 import { AxiosResponse } from "axios";
-
-interface PageResponse<T> {
-  totalPages: number;
-  currentPage: number;
-  pageSize: number;
-  totalElements: number;
-  content: T[];
-}
 
 export const getProducts = async ({
   page,

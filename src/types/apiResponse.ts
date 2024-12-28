@@ -3,3 +3,11 @@ export interface ApiResponse<T> {
   message: string;
   data: T;
 }
+
+export interface PageResponse<T> {
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  totalElements: number;
+  content: T[];
+}

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, use, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button, Checkbox, Input, Link, Spinner } from "@nextui-org/react";
 import { EyeFilledIcon } from "@/assets/icons/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "@/assets/icons/EyeSlashFilledIcon";
@@ -19,14 +19,7 @@ import { ToastAction } from "@/components/ui/toast";
 
 export default function Page() {
   const router = useRouter();
-
-  const { login, isAuthenticated, isLoading } = useAuth();
-
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      router.replace("/");
-    }
-  }, [isAuthenticated, router, isLoading]);
+  const { login } = useAuth();
 
   const {
     register,

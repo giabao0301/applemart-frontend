@@ -6,7 +6,6 @@ import {
   CartItemDeletionRequest,
   CartItemRequest,
 } from "@/types/cart";
-import { getToken } from "./cookieService";
 
 interface PageResponse<T> {
   totalPages: number;
@@ -18,11 +17,7 @@ interface PageResponse<T> {
 
 export const getCartItems = async (userId: number): Promise<CartItem[]> => {
   const response: AxiosResponse<ApiResponse<CartItem[]>> =
-    await axiosClient.get(`/carts/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    });
+    await axiosClient.get(`/carts/${userId}`);
   return response.data.data;
 };
 
@@ -32,12 +27,7 @@ export const addCartItem = async (
 ): Promise<string> => {
   const response: ApiResponse<string> = await axiosClient.post(
     `/carts/${userId}`,
-    data,
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
+    data
   );
   return response.data;
 };
@@ -48,12 +38,7 @@ export const updateCartItem = async (
 ): Promise<string> => {
   const response: ApiResponse<string> = await axiosClient.put(
     `/carts/${userId}`,
-    data,
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
+    data
   );
   return response.data;
 };
@@ -63,25 +48,14 @@ export const deleteCartItem = async (
   data: CartItemDeletionRequest
 ): Promise<string> => {
   const response: ApiResponse<string> = await axiosClient.delete(
-    `/carts/${userId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-      data: data,
-    }
+    `/carts/${userId}`
   );
   return response.data;
 };
 
 export const deleteAllCartItems = async (userId: number): Promise<string> => {
   const response: ApiResponse<string> = await axiosClient.delete(
-    `/carts/all/${userId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-      },
-    }
+    `/carts/all/${userId}`
   );
   return response.data;
 };

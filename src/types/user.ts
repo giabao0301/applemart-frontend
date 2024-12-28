@@ -9,6 +9,7 @@ type User = {
   phoneNumber: string;
   profileImageUrl: string;
   roles: Array<Role>;
+  enabled: boolean;
 };
 
 type Role = {

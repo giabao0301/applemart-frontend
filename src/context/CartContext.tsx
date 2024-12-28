@@ -4,7 +4,6 @@ import React, {
   useContext,
   useState,
   useCallback,
-  use,
   useEffect,
 } from "react";
 import {
@@ -67,6 +66,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (isAuthenticated && user) {
       handleGetCartItems(user.id);
+    } else {
+      setCartItems(null);
     }
   }, [handleGetCartItems, isAuthenticated, user]);
 

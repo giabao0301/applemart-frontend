@@ -24,6 +24,7 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    BASE_PATH: process.env.BASE_PATH,
   },
 };
 
