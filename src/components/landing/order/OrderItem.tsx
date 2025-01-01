@@ -2,6 +2,7 @@
 import Loading from "@/app/loading";
 import { getShippingMethods } from "@/services/orderService";
 import { getProductItemById } from "@/services/productService";
+import { Order, OrderLine } from "@/types/order";
 import { ProductItem } from "@/types/product";
 import formatPrice from "@/utils/priceFormatter";
 import { useQueries, useQuery } from "@tanstack/react-query";

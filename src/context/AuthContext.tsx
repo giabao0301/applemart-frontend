@@ -36,7 +36,7 @@ type AuthContextType = {
   user: User | null;
   signup: (data: SignupFormData) => Promise<void>;
   login: (data: LoginFormData) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   resendEmailVerification: (email: Email) => Promise<void>;
   confirmRegistrationEmail: (token: string) => Promise<string>;
   confirmPasswordResetEmail: (token: string) => Promise<string>;
@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           setUser(user);
         } catch (error) {
           console.error("Error in fetching user info:", error);
-          logout();
+          await logout();
         }
       }
       setIsLoading(false);
@@ -92,8 +92,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(user);
   }, []);
 
-  const handleLogout = useCallback(() => {
-    logout();
+  const handleLogout = useCallback(async () => {
+    await logout();
     setIsAuthenticatedState(false);
     setUser(null);
   }, []);

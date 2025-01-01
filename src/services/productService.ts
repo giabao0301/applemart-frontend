@@ -1,6 +1,13 @@
 import axiosClient from "./index";
-import { Category, Option, Product, ProductItem } from "@/types/product";
 import { ApiResponse, PageResponse } from "@/types/apiResponse";
+import {
+  Category,
+  Option,
+  Product,
+  ProductFormData,
+  ProductItem,
+  ProductStats,
+} from "@/types/product";
 import { AxiosResponse } from "axios";
 
 export const getProducts = async ({
@@ -136,6 +143,76 @@ export const getSuggestions = async (query: string): Promise<string[]> => {
       `/products/suggestions?query=${query}`
     );
     return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getProductStats = async (): Promise<ProductStats> => {
+  try {
+    const response: AxiosResponse<ApiResponse<ProductStats>> =
+      await axiosClient.get("/products/stats");
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateCategoryById = async (data: Category): Promise<Category> => {
+  try {
+    const response: AxiosResponse<ApiResponse<Category>> =
+      await axiosClient.put(`/categories/${data.id}`, data);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createCategory = async (data: Category): Promise<Category> => {
+  try {
+    const response: AxiosResponse<ApiResponse<Category>> =
+      await axiosClient.post(`/categories`, data);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteCategoryById = async (id: number): Promise<void> => {
+  try {
+    await axiosClient.delete(`/categories/${id}`);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createProduct = async (
+  data: ProductFormData
+): Promise<ProductFormData> => {
+  try {
+    const response: AxiosResponse<ApiResponse<ProductFormData>> =
+      await axiosClient.post(`/products`, data);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteProductById = async (id: number): Promise<void> => {
+  try {
+    await axiosClient.delete(`/products/${id}`);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateProductById = async (
+  data: ProductFormData
+): Promise<ProductFormData> => {
+  try {
+    const response: AxiosResponse<ApiResponse<ProductFormData>> =
+      await axiosClient.put(`/products/${data.id}`, data);
+    return response.data.data;
   } catch (error) {
     throw error;
   }

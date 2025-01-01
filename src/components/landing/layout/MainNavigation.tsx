@@ -49,7 +49,7 @@ export default function MainNavigation() {
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarBrand>
           <Link href="/" className="font-bold text-inherit">
-            <Logo className="w-24 h-24" />
+            <Logo className="w-24 h-12" />
           </Link>
         </NavbarBrand>
       </NavbarContent>
@@ -63,7 +63,7 @@ export default function MainNavigation() {
         <NavbarItem isActive={pathname === "/store/mac"}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <nav className="cursor-pointer ">Mac</nav>
+              <nav className="cursor-pointer">Mac</nav>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-32">
               <DropdownMenuItem className="hover:opacity-70 ">

@@ -48,7 +48,8 @@ export const deleteCartItem = async (
   data: CartItemDeletionRequest
 ): Promise<string> => {
   const response: ApiResponse<string> = await axiosClient.delete(
-    `/carts/${userId}`
+    `/carts/${userId}`,
+    { data }
   );
   return response.data;
 };

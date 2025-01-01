@@ -25,7 +25,7 @@ type AddressInfo = {
   ward: string;
 };
 
-export function AddressFormModal({
+export default function AddressFormModal({
   header,
   data,
 }: {

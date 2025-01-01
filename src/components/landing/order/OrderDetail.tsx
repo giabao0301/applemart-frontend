@@ -2,14 +2,11 @@
 import Loading from "@/app/loading";
 import { getShippingMethods } from "@/services/orderService";
 import { getProductItemById } from "@/services/productService";
+import { Order, OrderLine, ShippingMethod } from "@/types/order";
 import { ProductItem } from "@/types/product";
 import formatPrice from "@/utils/priceFormatter";
-import slugify from "@/utils/slugConverter";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { Truck } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { useEffect } from "react";
 
 const OrderDetail = ({ order }: { order: Order }) => {
   const orderLines: OrderLine[] = order.orderLines;
@@ -53,12 +50,6 @@ const OrderDetail = ({ order }: { order: Order }) => {
     <div className="p-4 bg-white">
       {productItems &&
         productItems.map((productItem) => (
-          // <Link
-          //   href={`/store/${
-          //     product?.parentCategory
-          //   }/${slug}/${item.productItem.slug.substring(slug.length + 1)}`}
-          //   key={productItem.id}
-          // >
           <div
             key={productItem.id}
             className="flex justify-between py-2 border-b-2"
@@ -90,14 +81,13 @@ const OrderDetail = ({ order }: { order: Order }) => {
               {formatPrice(calculateTotalAmount())}đ
             </div>
           </div>
-          // </Link>
         ))}
       <div className="flex flex-col gap-4 py-8 items-end border-b-2">
-        <div className="flex justify-between w-1/3">
+        <div className="flex justify-between w-1/3 sm:w-3/4 items-center">
           <div className="text-secondaryText text-right">Tổng tiền hàng</div>
           <span>{formatPrice(order.totalAmount)}đ</span>
         </div>
-        <div className="flex justify-between  w-1/3">
+        <div className="flex justify-between w-1/3 sm:w-3/4 items-center">
           <div className="text-secondaryText">Phí vận chuyển</div>
           <span>
             {formatPrice(
@@ -108,7 +98,7 @@ const OrderDetail = ({ order }: { order: Order }) => {
             đ
           </span>
         </div>
-        <div className="flex justify-between  w-1/3">
+        <div className="flex justify-between w-1/3 sm:w-3/4 items-center">
           <div className="text-secondaryText">Thành tiền</div>
           <span className="text-primary text-2xl">
             {formatPrice(order.totalAmount ?? 0)}đ
@@ -116,7 +106,7 @@ const OrderDetail = ({ order }: { order: Order }) => {
         </div>
       </div>
       <div className="flex flex-col gap-4 py-8 items-end border-b-2">
-        <div className="flex justify-between w-1/3">
+        <div className="flex justify-between items-center gap-4 w-1/3 sm:w-3/4">
           <div className="text-secondaryText text-right">
             Phương thức thanh toán
           </div>

@@ -22,6 +22,8 @@ import Image from "next/image";
 import { Button } from "@nextui-org/react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { NewOrderRequest, PaymentMethod, ShippingMethod } from "@/types/order";
+import AddressFormModal from "@/components/landing/address/AddressFormModal";
 
 type CheckoutState = {
   cartItems: number[];
@@ -133,7 +135,7 @@ const Checkout = () => {
       setOrder({
         userId: user?.id as number,
         addressId: selectedAddress.id,
-        paymentMethod: selectedPaymentMethod?.name ?? "",
+        paymentMethod: selectedPaymentMethod?.name ?? "cod",
         shippingMethod: selectedShippingMethod.name,
         orderLines: selectedCartItems.map((item) => ({
           productItemId: item.productItem.id,
@@ -208,10 +210,15 @@ const Checkout = () => {
               Mặc định
             </div>
           )}
-          <AddressSelector
-            addresses={addresses || []}
-            onSelect={selectAddressHandler}
-          />
+
+          {addresses && addresses.length ? (
+            <AddressSelector
+              addresses={addresses || []}
+              onSelect={selectAddressHandler}
+            />
+          ) : (
+            <AddressFormModal header="Thêm địa chỉ mới" />
+          )}
         </div>
       </div>
       <div className="px-8 mt-4 bg-white rounded-lg">

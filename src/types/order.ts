@@ -1,4 +1,4 @@
-interface NewOrderRequest {
+export interface NewOrderRequest {
   userId: number;
   addressId: number;
   paymentMethod: string;
@@ -6,7 +6,7 @@ interface NewOrderRequest {
   orderLines: OrderLine[];
 }
 
-interface Order {
+export interface Order {
   id: number;
   userId: number;
   orderDate: string;
@@ -19,19 +19,19 @@ interface Order {
   orderLines: OrderLine[];
 }
 
-interface OrderLine {
+export interface OrderLine {
   id?: number;
   productItemId: number;
   quantity: number;
 }
 
-interface ShippingMethod {
+export interface ShippingMethod {
   id: number;
   name: string;
   price: number;
 }
 
-interface PaymentMethod {
+export interface PaymentMethod {
   id: number;
   userId: number;
   name: string;
@@ -41,10 +41,15 @@ interface PaymentMethod {
   isDefault: boolean;
 }
 
-interface OrderCreationResponse {
+export interface OrderCreationResponse {
   result: string;
   vnpayLink: string;
   order: Order;
+}
+
+export interface OrderStats {
+  totalRevenue: number;
+  totalOrders: number;
 }
 
 enum OrderStatus {

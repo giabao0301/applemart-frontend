@@ -1,4 +1,4 @@
-interface Product {
+export interface Product {
   id: number;
   name: string;
   category: string;
@@ -8,10 +8,19 @@ interface Product {
   thumbnailUrl: string;
   slug: string;
   images: Array<ProductImage>;
-  variations: Array<Variation>;
 }
 
-interface ProductItem {
+export interface ProductFormData {
+  id: number;
+  name: string;
+  category: string;
+  lowestPrice: number;
+  description: string;
+  thumbnailUrl: string;
+  images: Array<ProductImage>;
+}
+
+export interface ProductItem {
   id: number;
   productName: string;
   name: string;
@@ -25,55 +34,49 @@ interface ProductItem {
   attributes: Array<ProductAttribute>;
 }
 
-interface ProductImage {
+export interface ProductImage {
   id: number;
   url: string;
 }
 
-interface Configuration {
+export interface Configuration {
   variationOption: Option;
 }
 
-interface Option {
+export interface Option {
   id: number;
   name: string;
   value: string;
   imageUrl: string;
 }
 
-interface ProductAttribute {
+export interface ProductAttribute {
   id: number;
   value: string;
 }
 
-interface Category {
+export interface Category {
   id: number;
   name: string;
   parentCategory: string;
   urlKey: string;
   thumbnailUrl: string;
+  variations: Array<Variation>;
 }
 
-interface Variation {
+export interface Variation {
   id: number;
   name: string;
   options: Array<VariationOption>;
 }
 
-interface VariationOption {
+export interface VariationOption {
   id: number;
   value: string;
   imageUrl: string;
 }
 
-export type {
-  Product,
-  Category,
-  Variation,
-  VariationOption,
-  Option,
-  ProductItem,
-  Configuration,
-  ProductImage,
-  ProductAttribute,
-};
+export interface ProductStats {
+  totalProductItems: number;
+  totalCategories: number;
+}

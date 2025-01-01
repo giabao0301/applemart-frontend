@@ -13,11 +13,21 @@ export const getAddresses = async () => {
   }
 };
 
-export const getAddressById = async (id: number) => {
+export const getAddressById = async (userId: number, id: number) => {
   try {
     const response: AxiosResponse<ApiResponse<Address>> = await axiosClient.get(
-      `users/addresses/${id}`
+      `users/${userId}/addresses/${id}`
     );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAddressesByUserId = async (userId: number) => {
+  try {
+    const response: AxiosResponse<ApiResponse<Address[]>> =
+      await axiosClient.get(`users/${userId}/addresses`);
     return response.data.data;
   } catch (error) {
     throw error;

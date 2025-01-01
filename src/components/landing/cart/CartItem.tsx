@@ -54,7 +54,7 @@ const CartItem: React.FC<Props> = ({ item, onSelect, selectedItems }) => {
     onSelect(item, isSelected);
   };
 
-  const removerCartItemHandler = () => {
+  const removeCartItemHandler = () => {
     const productItemId = item.productItem.id;
     if (!user) return;
     removeCartItem(user?.id, { productItemIds: [productItemId] });
@@ -99,7 +99,7 @@ const CartItem: React.FC<Props> = ({ item, onSelect, selectedItems }) => {
         </div>
         <div>
           <button
-            onClick={removerCartItemHandler}
+            onClick={removeCartItemHandler}
             className="hover:text-[#0070c9] hover:opacity-75"
           >
             <span>Xóa</span>

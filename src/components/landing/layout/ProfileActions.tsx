@@ -7,17 +7,12 @@ import {
   Avatar,
   DropdownMenu,
   DropdownItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
-  Link,
 } from "@nextui-org/react";
 import { AccountIcon } from "@/assets/icons/AccountIcon";
-import { SearchIcon } from "@/assets/icons/SearchIcon";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "../../ui/skeleton";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 type ProfileProps = {
   isMenuOpen?: boolean;
@@ -28,8 +23,10 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
 
   const { user, isLoading, logout } = useAuth();
 
-  const logoutHandler = () => {
-    logout();
+  const logoutHandler = async () => {
+    await logout();
+    console.log("logout");
+
     router.push("/login");
   };
 
@@ -87,31 +84,31 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
                 <DropdownItem
                   key="dashboard"
                   className="text-primaryText"
-                  onClick={() => router.push("/admin/dashboard")}
+                  textValue="dashboard"
                 >
-                  Bảng điều khiển
+                  <Link href="/admin/dashboard">Bảng điều khiển</Link>
                 </DropdownItem>
               ) : null}
               <DropdownItem
                 key="account"
                 className="text-primaryText"
-                onClick={() => router.push("/user/account/profile")}
+                textValue="account"
               >
-                Tài khoản
+                <Link href="/user/account/profile"> Tài khoản</Link>
               </DropdownItem>
               <DropdownItem
                 key="purchase"
                 className="text-primaryText"
-                onClick={() => router.push("/user/purchase")}
+                textValue="purchase"
               >
-                Đơn mua
+                <Link href="/user/purchase">Đơn mua</Link>
               </DropdownItem>
               <DropdownItem
                 key="saved"
                 className="text-primaryText"
-                onClick={() => router.push("/user/saved")}
+                textValue="saved"
               >
-                Mục đã lưu
+                <Link href="/user/saved">Mục đã lưu</Link>
               </DropdownItem>
               <DropdownItem
                 key="logout"
@@ -127,16 +124,16 @@ const ProfileActions = ({ isMenuOpen }: ProfileProps) => {
               <DropdownItem
                 className="text-primaryText"
                 key="login"
-                onClick={() => router.push("/login")}
+                textValue="login"
               >
-                Đăng nhập
+                <Link href="/login"> Đăng nhập</Link>
               </DropdownItem>
               <DropdownItem
                 className="text-primaryText"
-                key="register"
-                onClick={() => router.push("/signup")}
+                key="signup"
+                textValue="signup"
               >
-                Đăng ký
+                <Link href="/signup">Đăng ký</Link>
               </DropdownItem>
             </DropdownMenu>
           )}

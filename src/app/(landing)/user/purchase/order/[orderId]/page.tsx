@@ -25,7 +25,7 @@ const Page = ({ params }: { params: { orderId: string } }) => {
     queryKey: ["address", order?.addressId],
     queryFn: () =>
       order?.addressId
-        ? getAddressById(order.addressId)
+        ? getAddressById(order.userId, order.addressId)
         : Promise.resolve(null),
     enabled: !!order?.addressId,
   });

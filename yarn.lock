@@ -454,6 +454,23 @@
     "@react-types/button" "3.10.1"
     "@react-types/shared" "3.26.0"
 
+"@nextui-org/button@2.2.8":
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/@nextui-org/button/-/button-2.2.8.tgz#dc584e8f0daa34e2aafa98ebb70234a5b4361672"
+  integrity sha512-Km9ER+jpA3DdYmbh8k30w2DMXZIPtZjs7QVVaPAEW+rJYnGWNsomcltlOLIvHpBYeAbB8hfJCbRJ35r9WeL9Gw==
+  dependencies:
+    "@nextui-org/react-utils" "2.1.2"
+    "@nextui-org/ripple" "2.2.6"
+    "@nextui-org/shared-utils" "2.1.2"
+    "@nextui-org/spinner" "2.2.5"
+    "@nextui-org/use-aria-button" "2.2.4"
+    "@react-aria/button" "3.11.0"
+    "@react-aria/focus" "3.19.0"
+    "@react-aria/interactions" "3.22.5"
+    "@react-aria/utils" "3.26.0"
+    "@react-types/button" "3.10.1"
+    "@react-types/shared" "3.26.0"
+
 "@nextui-org/calendar@2.2.4":
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/@nextui-org/calendar/-/calendar-2.2.4.tgz#b7e8f76bb668429beed4da820e7fd94f7940a879"
@@ -601,6 +618,16 @@
     "@nextui-org/system-rsc" "2.3.4"
     "@react-types/shared" "3.26.0"
 
+"@nextui-org/divider@2.2.5":
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@nextui-org/divider/-/divider-2.2.5.tgz#d4531f70ebdfb534f9c9379e9585bffee64a464e"
+  integrity sha512-OB8b3CU4nQ5ARIGL48izhzrAHR0mnwws+Kd5LqRCZ/1R9uRMqsq7L0gpG9FkuV2jf2FuA7xa/GLOLKbIl4CEww==
+  dependencies:
+    "@nextui-org/react-rsc-utils" "2.1.1"
+    "@nextui-org/shared-utils" "2.1.2"
+    "@nextui-org/system-rsc" "2.3.5"
+    "@react-types/shared" "3.26.0"
+
 "@nextui-org/dom-animation@2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@nextui-org/dom-animation/-/dom-animation-2.1.1.tgz#42611dc7aff1a6ca11ff3d7683ea754a35ec8577"
@@ -628,6 +655,23 @@
     "@nextui-org/shared-utils" "2.1.1"
     "@react-aria/focus" "3.19.0"
     "@react-aria/menu" "3.16.0"
+    "@react-aria/utils" "3.26.0"
+    "@react-stately/menu" "3.9.0"
+    "@react-types/menu" "3.9.13"
+
+"@nextui-org/dropdown@^2.3.8":
+  version "2.3.8"
+  resolved "https://registry.yarnpkg.com/@nextui-org/dropdown/-/dropdown-2.3.8.tgz#b825ce08fc98df91388b6ff67da17b40eb1a6157"
+  integrity sha512-aRvxZJhrfL0GEOZpX1uFvQVuVODLU0Lc3m3xPxqc337zLF09kXLiSao09oo5AbUoOAlfUP/d1qWH6wIOoJrvIA==
+  dependencies:
+    "@nextui-org/aria-utils" "2.2.6"
+    "@nextui-org/menu" "2.2.8"
+    "@nextui-org/popover" "2.3.8"
+    "@nextui-org/react-utils" "2.1.2"
+    "@nextui-org/shared-utils" "2.1.2"
+    "@react-aria/focus" "3.19.0"
+    "@react-aria/menu" "3.16.0"
+    "@react-aria/overlays" "3.24.0"
     "@react-aria/utils" "3.26.0"
     "@react-stately/menu" "3.9.0"
     "@react-types/menu" "3.9.13"
@@ -771,6 +815,25 @@
     "@react-types/menu" "3.9.13"
     "@react-types/shared" "3.26.0"
 
+"@nextui-org/menu@2.2.8":
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/@nextui-org/menu/-/menu-2.2.8.tgz#e5b88472a76291da7a0d6c7f0a258ec0dfa77daf"
+  integrity sha512-JGyrAc9FEsd2rNlDwnckBkSdXe2V7cJN2Y62RRaQeJFMOZsw8tnmW9SLaL4ZB+LTmiGLORsU+b0frizu960HnA==
+  dependencies:
+    "@nextui-org/aria-utils" "2.2.6"
+    "@nextui-org/divider" "2.2.5"
+    "@nextui-org/react-utils" "2.1.2"
+    "@nextui-org/shared-utils" "2.1.2"
+    "@nextui-org/use-is-mobile" "2.2.2"
+    "@react-aria/focus" "3.19.0"
+    "@react-aria/interactions" "3.22.5"
+    "@react-aria/menu" "3.16.0"
+    "@react-aria/utils" "3.26.0"
+    "@react-stately/menu" "3.9.0"
+    "@react-stately/tree" "3.8.6"
+    "@react-types/menu" "3.9.13"
+    "@react-types/shared" "3.26.0"
+
 "@nextui-org/modal@2.2.4", "@nextui-org/modal@^2.0.41":
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/@nextui-org/modal/-/modal-2.2.4.tgz#ce0d4cbed5c7e9caafc4cee94370db60b7b1e13d"
@@ -839,6 +902,28 @@
     "@nextui-org/react-utils" "2.1.1"
     "@nextui-org/shared-utils" "2.1.1"
     "@nextui-org/use-aria-button" "2.2.2"
+    "@nextui-org/use-safe-layout-effect" "2.1.1"
+    "@react-aria/dialog" "3.5.20"
+    "@react-aria/focus" "3.19.0"
+    "@react-aria/interactions" "3.22.5"
+    "@react-aria/overlays" "3.24.0"
+    "@react-aria/utils" "3.26.0"
+    "@react-stately/overlays" "3.6.12"
+    "@react-types/button" "3.10.1"
+    "@react-types/overlays" "3.8.11"
+
+"@nextui-org/popover@2.3.8":
+  version "2.3.8"
+  resolved "https://registry.yarnpkg.com/@nextui-org/popover/-/popover-2.3.8.tgz#726c018b4e24bd56b510403a33919df0f3d2e50c"
+  integrity sha512-hRUSD7NVlkRQjfShe6glnQAsNI9nOugLKqSzUoDt275P4fDHutEedRZUCasjOeMO+xhehIX8cyZ2mGyZAan5zQ==
+  dependencies:
+    "@nextui-org/aria-utils" "2.2.6"
+    "@nextui-org/button" "2.2.8"
+    "@nextui-org/dom-animation" "2.1.1"
+    "@nextui-org/framer-utils" "2.1.5"
+    "@nextui-org/react-utils" "2.1.2"
+    "@nextui-org/shared-utils" "2.1.2"
+    "@nextui-org/use-aria-button" "2.2.4"
     "@nextui-org/use-safe-layout-effect" "2.1.1"
     "@react-aria/dialog" "3.5.20"
     "@react-aria/focus" "3.19.0"
@@ -963,6 +1048,15 @@
     "@nextui-org/react-utils" "2.1.1"
     "@nextui-org/shared-utils" "2.1.1"
 
+"@nextui-org/ripple@2.2.6":
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/@nextui-org/ripple/-/ripple-2.2.6.tgz#726e23016b95315bb482e55fec6b7f85c447cb4e"
+  integrity sha512-8bdE+nPZdT/U8H0fRaZBOAB3npfKGnv1KO2JWL2jSnN7wkO4kXZwcHqZT3aRFxqWvdsPXj8IajMpnMoM7LNYkA==
+  dependencies:
+    "@nextui-org/dom-animation" "2.1.1"
+    "@nextui-org/react-utils" "2.1.2"
+    "@nextui-org/shared-utils" "2.1.2"
+
 "@nextui-org/scroll-shadow@2.3.3":
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/@nextui-org/scroll-shadow/-/scroll-shadow-2.3.3.tgz#46f33088ae605ea4b66ac51d5a3b5490fea0b30d"
@@ -1068,6 +1162,15 @@
     "@nextui-org/shared-utils" "2.1.1"
     "@nextui-org/system-rsc" "2.3.4"
 
+"@nextui-org/spinner@2.2.5":
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@nextui-org/spinner/-/spinner-2.2.5.tgz#e638731bfc1c561744d736486f193164ec572894"
+  integrity sha512-bU4DV1USHQUbbhzB0Qi6q27JNm1uF6r+IOs/7BfQj6sj2j124ull2BuxpyhmrAnwb2Hqj7U1goy9zMigoS37mg==
+  dependencies:
+    "@nextui-org/react-utils" "2.1.2"
+    "@nextui-org/shared-utils" "2.1.2"
+    "@nextui-org/system-rsc" "2.3.5"
+
 "@nextui-org/switch@2.2.4":
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/@nextui-org/switch/-/switch-2.2.4.tgz#0c95ce273ce6eca2bb1419e49b0133c0701d15fe"
@@ -1075,6 +1178,22 @@
   dependencies:
     "@nextui-org/react-utils" "2.1.1"
     "@nextui-org/shared-utils" "2.1.1"
+    "@nextui-org/use-safe-layout-effect" "2.1.1"
+    "@react-aria/focus" "3.19.0"
+    "@react-aria/interactions" "3.22.5"
+    "@react-aria/switch" "3.6.10"
+    "@react-aria/utils" "3.26.0"
+    "@react-aria/visually-hidden" "3.8.18"
+    "@react-stately/toggle" "3.8.0"
+    "@react-types/shared" "3.26.0"
+
+"@nextui-org/switch@^2.2.7":
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/@nextui-org/switch/-/switch-2.2.7.tgz#e88f46f494ac8cb2b338a12d3499770584e5d516"
+  integrity sha512-745oSgHN4LUYFcGwN+xDSa94fBb1H+dy3RYS1sV+RzAKmHyN2OjE4x40/3W09KDQQyyA0f7y/M8gh49f4tqphw==
+  dependencies:
+    "@nextui-org/react-utils" "2.1.2"
+    "@nextui-org/shared-utils" "2.1.2"
     "@nextui-org/use-safe-layout-effect" "2.1.1"
     "@react-aria/focus" "3.19.0"
     "@react-aria/interactions" "3.22.5"
@@ -1252,6 +1371,18 @@
   resolved "https://registry.yarnpkg.com/@nextui-org/use-aria-button/-/use-aria-button-2.2.2.tgz#60c6ea892678b56c83cb4638ee1947707f8701b3"
   integrity sha512-Rn6AVfiw+QdzLaF7pnGb1AaTSZ3FgBkVhO2bDoq97q/sAGUW8V5UWD19rHZ8TD0Fepdi4HqXWIH+XyPxHIuogA==
   dependencies:
+    "@react-aria/focus" "3.19.0"
+    "@react-aria/interactions" "3.22.5"
+    "@react-aria/utils" "3.26.0"
+    "@react-types/button" "3.10.1"
+    "@react-types/shared" "3.26.0"
+
+"@nextui-org/use-aria-button@2.2.4":
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/@nextui-org/use-aria-button/-/use-aria-button-2.2.4.tgz#9237999b277ea68c4b7132ea16a992ea89a6cf71"
+  integrity sha512-Bz8l4JGzRKh6V58VX8Laq4rKZDppsnVuNCBHpMJuLo2F9ht7UKvZAEJwXcdbUZ87aui/ZC+IPYqgjvT+d8QlQg==
+  dependencies:
+    "@nextui-org/shared-utils" "2.1.2"
     "@react-aria/focus" "3.19.0"
     "@react-aria/interactions" "3.22.5"
     "@react-aria/utils" "3.26.0"

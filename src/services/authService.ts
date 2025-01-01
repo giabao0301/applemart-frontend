@@ -21,7 +21,6 @@ export const login = async (data: LoginFormData) => {
 };
 
 export const logout = async () => {
-  localStorage.removeItem("user");
   return (await axiosClient.get("/auth/logout")).data;
 };
 

@@ -44,7 +44,7 @@ export default function Signup() {
         title: "Đã gửi yêu cầu xác thực OTP",
         description: "Kiểm tra email của bạn để nhận mã OTP.",
       });
-      router.replace("/verify");
+      router.replace("/verify?type=registration");
     },
     onError: (error: AxiosError) => {
       if (

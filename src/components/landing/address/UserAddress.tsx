@@ -4,7 +4,7 @@ import { deleteAddress, setDefaultAddress } from "@/services/addressService";
 import { Address as address } from "@/types/user";
 import formatPhoneNumber from "@/utils/phoneNumberFormatter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AddressForm } from "./AddressFormModal/";
+import AddressFormModal from "./AddressFormModal";
 import { useEffect, useState } from "react";
 
 type AddressProps = {
@@ -70,7 +70,7 @@ const UserAddress: React.FC<AddressProps> = ({ address }: AddressProps) => {
             </span>
           </div>
           <div className="flex gap-4">
-            <AddressForm header="Cập nhật địa chỉ" data={address} />
+            <AddressFormModal header="Cập nhật địa chỉ" data={address} />
             {!address.isDeliveryAddress && (
               <button className="text-primary" onClick={deleteAddressHandler}>
                 Xóa

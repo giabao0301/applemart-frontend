@@ -79,8 +79,8 @@ const Page = () => {
   }, [user, setValue]);
 
   const mutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateProfileFormData }) =>
-      updateProfile(id, data),
+    mutationFn: ({ data }: { data: UpdateProfileFormData }) =>
+      updateProfile(data),
     onSuccess: () => {
       toast({
         description: "Đã lưu ✅",
@@ -157,7 +157,7 @@ const Page = () => {
       setLoading(false);
     }
     if (user) {
-      mutation.mutate({ id: user.id, data });
+      mutation.mutate({ data });
     }
   };
 

@@ -14,15 +14,17 @@ axiosClient.interceptors.response.use(
     return response;
   },
   async (error) => {
-    if (error.response?.status === 403) {
-      try {
-        await refreshToken();
-        return axios(error.config);
-      } catch (refreshError) {
-        console.log("Error refreshing token:", refreshError);
-        window.location.href = "/login";
-      }
-    }
+    // if (error.response?.status === 403) {
+    //   try {
+    //     await refreshToken();
+    //     console.log(error.config);
+
+    //     return axios(error.config);
+    //   } catch (refreshError) {
+    //     console.log("Error refreshing token:", refreshError);
+    //     // window.location.href = "/login";
+    //   }
+    // }
     return Promise.reject(error);
   }
 );

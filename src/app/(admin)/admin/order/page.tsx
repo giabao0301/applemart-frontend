@@ -19,28 +19,21 @@ import React from "react";
 import PageTitle from "@/components/admin/PageTitle";
 import { Chip, Navbar, Tooltip } from "@nextui-org/react";
 import ProfileActions from "@/components/landing/layout/ProfileActions";
-import { useQuery } from "@tanstack/react-query";
-import { getOrders } from "@/services/orderService";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteOrderById, getOrders } from "@/services/orderService";
 import formatPrice from "@/utils/priceFormatter";
 import { Eye, Pen, Pencil, Trash2 } from "lucide-react";
-import { OrderForm } from "@/components/admin/OrderForm";
+import { OrderFormModal } from "@/components/admin/OrderFormModal";
+import Image from "next/image";
+import { Alert } from "@/components/ui/custom/AlertDialog";
+import { formatDate } from "@/utils/dateFormatter";
+import { Order } from "@/types/order";
 
 type Props = {};
 
-type OrderTable = {
-  orderId: number;
-  userId: number;
-  orderDate: string;
-  totalAmount: string;
-  paymentMethod: string;
-  paymentStatus: string;
-  shippingMethod: string;
-  orderStatus: string;
-};
-
-const columns: ColumnDef<OrderTable>[] = [
+const columns: ColumnDef<Order>[] = [
   {
-    accessorKey: "orderId",
+    accessorKey: "id",
     header: "Mã đơn hàng",
   },
   {
@@ -49,15 +42,44 @@ const columns: ColumnDef<OrderTable>[] = [
   },
   {
     accessorKey: "orderDate",
-    header: "Ngày đặt hàng",
+    header: "Thời gian đặt hàng",
+    cell: ({ row }) => {
+      return formatDate(row.original.orderDate || "");
+    },
   },
   {
     accessorKey: "totalAmount",
     header: "Tổng tiền",
+    cell: ({ row }) => {
+      return formatPrice(row.getValue("totalAmount")).concat("đ");
+    },
   },
   {
     accessorKey: "paymentMethod",
     header: "Phương thức thanh toán",
+    cell: ({ row }) => {
+      const paymentMethod: string = row.getValue("paymentMethod");
+
+      if (paymentMethod === "vnpay") {
+        return (
+          <div className="flex items-center gap-2">
+            <Image
+              className="w-8 h-8"
+              width={20}
+              height={20}
+              src="https://res.cloudinary.com/dipiog2a2/image/upload/v1732691062/sqeue1pi7hhusw1urb1z.png"
+              alt="vnpay"
+              quality={100}
+              unoptimized={true}
+              priority={true}
+            />
+            <div className="text-sm">{paymentMethod.toUpperCase()}</div>
+          </div>
+        );
+      } else {
+        return <div className="ml-10">{paymentMethod.toUpperCase()}</div>;
+      }
+    },
   },
   {
     accessorKey: "paymentStatus",
@@ -66,8 +88,9 @@ const columns: ColumnDef<OrderTable>[] = [
       return (
         <Chip
           color={
-            (row.getValue("paymentStatus") === "Hoàn tất" && "success") ||
-            (row.getValue("paymentStatus") === "Đang chờ" && "warning") ||
+            (row.getValue("paymentStatus") === "Hoàn thành" && "success") ||
+            (row.getValue("paymentStatus") === "Chưa thanh toán" &&
+              "warning") ||
             (row.getValue("paymentStatus") === "Thất bại" && "danger") ||
             "default"
           }
@@ -79,10 +102,6 @@ const columns: ColumnDef<OrderTable>[] = [
     },
   },
   {
-    accessorKey: "shippingMethod",
-    header: "Phương thức vận chuyển",
-  },
-  {
     accessorKey: "orderStatus",
     header: "Tình trạng đơn hàng",
     cell: ({ row }) => {
@@ -91,11 +110,10 @@ const columns: ColumnDef<OrderTable>[] = [
           color={
             (row.getValue("orderStatus") === "Hoàn thành" && "success") ||
             (row.getValue("orderStatus") === "Chờ xác nhận" && "default") ||
-            (row.getValue("orderStatus") === "Đang chuẩn bị hàng" &&
-              "secondary") ||
+            (row.getValue("orderStatus") === "Đang chuẩn bị" && "secondary") ||
             (row.getValue("orderStatus") === "Đang giao" && "warning") ||
             (row.getValue("orderStatus") === "Đã hủy" && "danger") ||
-            (row.getValue("orderStatus") === "Đã trả hàng" && "danger") ||
+            (row.getValue("orderStatus") === "Đã trả" && "danger") ||
             "default"
           }
           className="text-white"
@@ -106,40 +124,14 @@ const columns: ColumnDef<OrderTable>[] = [
     },
   },
   {
-    accessorKey: "edit",
-    header: "Chỉnh sửa",
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-4 items-center">
-          <Tooltip content="Xem chi tiết">
-            <Eye
-              size={16}
-              onClick={() => {}}
-              className="cursor-pointer text-secondaryText"
-            />
-          </Tooltip>
-          <Tooltip content="Chỉnh sửa">
-            <Pencil
-              size={16}
-              onClick={() => {}}
-              className="cursor-pointer text-secondaryText"
-            />
-          </Tooltip>
-          <Tooltip content="Xóa" className="text-error">
-            <Trash2
-              className="text-error cursor-pointer"
-              size={16}
-              onClick={() => {}}
-            />
-          </Tooltip>
-        </div>
-      );
-    },
+    accessorKey: "actions",
+    header: "Hành động",
   },
 ];
 
 export default function OrdersPage({}: Props) {
-  const { data: orders } = useQuery({
+  const queryClient = useQueryClient();
+  const { data } = useQuery({
     queryKey: ["orders", { page: 0, size: 10, sort: "id", dir: "desc" }],
     queryFn: () =>
       getOrders({
@@ -150,19 +142,41 @@ export default function OrdersPage({}: Props) {
       }),
   });
 
-  const data: OrderTable[] =
-    orders?.content.map((order) => {
-      return {
-        orderId: order.id,
-        userId: order.userId,
-        orderDate: new Date(order.orderDate).toLocaleDateString(),
-        totalAmount: formatPrice(order.totalAmount).concat("đ"),
-        paymentMethod: order.paymentMethod.toUpperCase(),
-        paymentStatus: order.paymentStatus,
-        shippingMethod: order.shippingMethod,
-        orderStatus: order.orderStatus,
-      };
-    }) || [];
+  const deleteOrderHandler = async (orderId: number) => {
+    await deleteOrderById(orderId);
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
+  };
+
+  columns[columns.length - 1].cell = ({ row }) => {
+    return (
+      <div className="flex gap-4 items-center">
+        <OrderFormModal header="Chi tiết đơn hàng" data={row.original}>
+          <Tooltip content="Xem chi tiết">
+            <Eye size={16} className="cursor-pointer text-secondaryText" />
+          </Tooltip>
+        </OrderFormModal>
+        <OrderFormModal
+          header="Chỉnh sửa thông tin đơn hàng"
+          data={row.original}
+        >
+          <Tooltip content="Chỉnh sửa">
+            <Pencil size={16} className="cursor-pointer text-secondaryText" />
+          </Tooltip>
+        </OrderFormModal>
+        <Alert
+          title={"Bạn chắc chắn muốn xóa đơn hàng này?"}
+          description={`Mã đơn hàng: ${row.original.id}`}
+          action="Có"
+          cancel="Không"
+          onAction={() => deleteOrderHandler(row.original.id)}
+        >
+          {/* <Tooltip content="Xóa" className="text-error"> */}
+          <Trash2 className="text-error cursor-pointer" size={16} />
+          {/* </Tooltip> */}
+        </Alert>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-5 w-full">
@@ -174,7 +188,7 @@ export default function OrdersPage({}: Props) {
         <PageTitle title="Đơn hàng" />
         <ProfileActions />
       </Navbar>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data?.content || []} />
     </div>
   );
 }

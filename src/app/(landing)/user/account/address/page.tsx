@@ -4,7 +4,7 @@ import { getAddresses } from "@/services/addressService";
 import { Address } from "@/types/user";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../../../loading";
-import { AddressForm } from "@/components/landing/address/AddressFormModal/";
+import AddressFormModal from "@/components/landing/address/AddressFormModal";
 
 const Page = () => {
   const {
@@ -31,7 +31,7 @@ const Page = () => {
       <div className="w-full">
         <div className="flex justify-between items-center">
           <h2 className="text-xl">Địa chỉ của tôi</h2>
-          <AddressForm header="Địa chỉ mới" />
+          <AddressFormModal header="Địa chỉ mới" />
         </div>
         <div className="mt-8 text-lg">Địa chỉ</div>
         <div className="mt-4">

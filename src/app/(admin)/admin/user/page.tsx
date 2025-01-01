@@ -20,24 +20,19 @@ import PageTitle from "@/components/admin/PageTitle";
 import { cn } from "@/lib/utils";
 import { Avatar, Chip, Navbar, Tooltip } from "@nextui-org/react";
 import ProfileActions from "@/components/landing/layout/ProfileActions";
-import { useQuery } from "@tanstack/react-query";
-import { getUsers } from "@/services/userService";
-import { Eye, Pencil, Trash, Trash2 } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteAccount, getUsers } from "@/services/userService";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import { formatDate } from "@/utils/dateFormatter";
+import { Alert } from "@/components/ui/custom/AlertDialog";
+import { UserFormModal } from "@/components/admin/UserFormModal";
+import { User } from "@/types/user";
 
 type Props = {};
 
-type UserTable = {
-  userId: number;
-  email: string;
-  fullName: string;
-  phoneNumber: string;
-  role: string;
-  status: boolean;
-};
-
-const columns: ColumnDef<UserTable>[] = [
+const columns: ColumnDef<User>[] = [
   {
-    accessorKey: "userId",
+    accessorKey: "id",
     header: "Mã người dùng",
   },
   {
@@ -48,11 +43,15 @@ const columns: ColumnDef<UserTable>[] = [
         <Avatar
           src={
             row.getValue("profileImageUrl") ||
-            `https://api.dicebear.com/7.x/lorelei/svg?seed=${Math.random()}`
+            `https://api.dicebear.com/7.x/lorelei/svg?seed=${row.original.email}`
           }
         />
       );
     },
+  },
+  {
+    accessorKey: "username",
+    header: "Tên đăng nhập",
   },
   {
     accessorKey: "email",
@@ -63,23 +62,33 @@ const columns: ColumnDef<UserTable>[] = [
     header: "Tên đầy đủ",
   },
   {
+    accessorKey: "dateOfBirth",
+    header: "Ngày sinh",
+    cell: ({ row }) => {
+      return formatDate(row.getValue("dateOfBirth"));
+    },
+  },
+  {
     accessorKey: "phoneNumber",
     header: "Số điện thoại",
   },
   {
     accessorKey: "role",
     header: "Vai trò",
+    cell: ({ row }) => {
+      return row.original.roles.map((role) => role.name).join(", ");
+    },
   },
   {
-    accessorKey: "status",
+    accessorKey: "enabled",
     header: "Tình trạng",
     cell: ({ row }) => {
       return (
         <Chip
-          color={row.getValue("status") === true ? "success" : "default"}
+          color={row.getValue("enabled") === true ? "success" : "default"}
           className="text-white"
         >
-          {row.getValue("status") === true ? "Hoạt động" : "Chưa kích hoạt"}
+          {row.getValue("enabled") === true ? "Hoạt động" : "Chưa kích hoạt"}
         </Chip>
       );
     },
@@ -87,54 +96,52 @@ const columns: ColumnDef<UserTable>[] = [
   {
     accessorKey: "actions",
     header: "Hành động",
-    cell: ({ row }) => {
-      return (
-        <div className="flex gap-4 items-center">
-          <Tooltip content="Xem chi tiết">
-            <Eye
-              size={16}
-              onClick={() => {}}
-              className="cursor-pointer text-secondaryText"
-            />
-          </Tooltip>
-          <Tooltip content="Chỉnh sửa">
-            <Pencil
-              size={16}
-              onClick={() => {}}
-              className="cursor-pointer text-secondaryText"
-            />
-          </Tooltip>
-          <Tooltip content="Xóa" className="text-error">
-            <Trash2
-              className="text-error cursor-pointer"
-              size={16}
-              onClick={() => {}}
-            />
-          </Tooltip>
-        </div>
-      );
-    },
   },
 ];
 
 export default function UsersPage({}: Props) {
-  const { data: users } = useQuery({
+  const queryClient = useQueryClient();
+
+  const { data } = useQuery({
     queryKey: ["users", { page: 0, size: 10, sort: "id", dir: "asc" }],
     queryFn: () => getUsers({ page: 0, size: 10, sort: "id", dir: "asc" }),
   });
 
-  const data: UserTable[] =
-    users?.content.map((user) => {
-      return {
-        userId: user.id,
-        profileImageUrl: user.profileImageUrl,
-        email: user.email,
-        fullName: user.fullName,
-        phoneNumber: user.phoneNumber,
-        role: user.roles[0].name,
-        status: user.enabled,
-      };
-    }) || [];
+  const deleteUserHandler = async (userId: number) => {
+    await deleteAccount(userId);
+    queryClient.invalidateQueries({ queryKey: ["users"] });
+  };
+
+  columns[columns.length - 1].cell = ({ row }) => {
+    return (
+      <div className="flex gap-4 items-center">
+        <UserFormModal header="Chi tiết người dùng" data={row.original}>
+          <Tooltip content="Xem chi tiết">
+            <Eye size={16} className="cursor-pointer text-secondaryText" />
+          </Tooltip>
+        </UserFormModal>
+        <UserFormModal
+          header="Chỉnh sửa thông tin người dùng"
+          data={row.original}
+        >
+          <Tooltip content="Chỉnh sửa">
+            <Pencil size={16} className="cursor-pointer text-secondaryText" />
+          </Tooltip>
+        </UserFormModal>
+        <Alert
+          title={"Bạn chắc chắn muốn xóa người dùng này?"}
+          description={`Mã người dùng: ${row.original.id}`}
+          action="Có"
+          cancel="Không"
+          onAction={() => deleteUserHandler(row.original.id)}
+        >
+          {/* <Tooltip content="Xóa" className="text-error"> */}
+          <Trash2 className="text-error cursor-pointer" size={16} />
+          {/* </Tooltip> */}
+        </Alert>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-5 w-full">
@@ -146,7 +153,7 @@ export default function UsersPage({}: Props) {
         <PageTitle title="Người dùng" />
         <ProfileActions />
       </Navbar>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data?.content || []} />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { Address } from "@/types/user";
 import formatPhoneNumber from "@/utils/phoneNumberFormatter";
 import { Radio, RadioGroup } from "@nextui-org/react";
-import { AddressForm } from "./AddressFormModal/";
+import AddressFormModal from "./AddressFormModal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { setDefaultAddress } from "@/services/addressService";
 import { toast } from "@/hooks/use-toast";
@@ -35,7 +35,7 @@ const AddressItem = ({
             </span>
           </div>
           <div className="flex gap-4">
-            <AddressForm header="Cập nhật địa chỉ" data={address} />
+            <AddressFormModal header="Cập nhật địa chỉ" data={address} />
           </div>
         </div>
       </div>

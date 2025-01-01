@@ -16,12 +16,23 @@ export const getUserProfile = async (): Promise<User> => {
 };
 
 export const updateProfile = async (
-  id: number,
   data: UpdateProfileFormData
 ): Promise<User> => {
   try {
     const response: AxiosResponse<ApiResponse<User>> = await axiosClient.put(
-      `users/${id}`,
+      `users/profile`,
+      data
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateUserById = async (data: User): Promise<User> => {
+  try {
+    const response: AxiosResponse<ApiResponse<User>> = await axiosClient.put(
+      `users/${data.id}`,
       data
     );
     return response.data.data;
@@ -54,6 +65,17 @@ export const getUsers = async ({
       await axiosClient.get(
         `/users?page=${page}&size=${size}&sort=${sort}&dir=${dir}`
       );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserById = async (id: number): Promise<User> => {
+  try {
+    const response: AxiosResponse<ApiResponse<User>> = await axiosClient.get(
+      `users/${id}`
+    );
     return response.data.data;
   } catch (error) {
     throw error;

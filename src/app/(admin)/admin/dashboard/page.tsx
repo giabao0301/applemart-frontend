@@ -16,11 +16,14 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { User } from "@/types/user";
+import { getOrderStats } from "@/services/orderService";
+import formatPrice from "@/utils/priceFormatter";
+import { getProductStats } from "@/services/productService";
 
 const cardData: CardProps[] = [
   {
     label: "Tổng doanh thu",
-    amount: "450.231.899đ",
+    amount: "+450.231.899đ",
     description: "+20.1% so với tháng trước",
     icon: DollarSign,
   },
@@ -45,6 +48,26 @@ const cardData: CardProps[] = [
 ];
 
 export default function Dashboard() {
+  const { data: orderStats } = useQuery({
+    queryKey: ["orderStats"],
+    queryFn: () => getOrderStats(),
+  });
+
+  const { data: productStats } = useQuery({
+    queryKey: ["productStats"],
+    queryFn: () => getProductStats(),
+  });
+
+  console.log(productStats);
+
+  cardData[0].amount = `+${formatPrice(orderStats?.totalRevenue || 0)}đ`;
+
+  cardData[1].amount = `+${orderStats?.totalOrders || 0}`;
+
+  cardData[2].amount = `${productStats?.totalProductItems || 0}`;
+
+  cardData[3].amount = `${productStats?.totalCategories || 0}`;
+
   const { data } = useQuery({
     queryKey: ["users", { page: 0, size: 5, sort: "id", dir: "desc" }],
     queryFn: () => getUsers({ page: 0, size: 5, sort: "id", dir: "desc" }),

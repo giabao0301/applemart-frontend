@@ -1,6 +1,14 @@
 import { AxiosResponse } from "axios";
 import axiosClient from ".";
 import { ApiResponse, PageResponse } from "@/types/apiResponse";
+import {
+  NewOrderRequest,
+  Order,
+  OrderCreationResponse,
+  OrderStats,
+  PaymentMethod,
+  ShippingMethod,
+} from "@/types/order";
 
 export const createOrder = async (order: NewOrderRequest) => {
   try {
@@ -59,6 +67,38 @@ export const getOrders = async ({
       await axiosClient.get(
         `/orders?page=${page}&size=${size}&sort=${sort}&dir=${dir}`
       );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateOrder = async (order: Order) => {
+  try {
+    const response: AxiosResponse<ApiResponse<Order>> = await axiosClient.put(
+      `orders/${order.id}`,
+      order
+    );
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteOrderById = async (orderId: number) => {
+  try {
+    const response: AxiosResponse<ApiResponse<Order>> =
+      await axiosClient.delete(`orders/${orderId}`);
+    return response.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getOrderStats = async () => {
+  try {
+    const response: AxiosResponse<ApiResponse<OrderStats>> =
+      await axiosClient.get("orders/stats");
     return response.data.data;
   } catch (error) {
     throw error;

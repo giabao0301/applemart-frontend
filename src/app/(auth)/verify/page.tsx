@@ -44,6 +44,7 @@ function VerifyPage() {
   const searchParams = useSearchParams();
 
   const type = searchParams.get("type");
+  console.log(type);
 
   const mutation = useMutation({
     mutationFn: type
@@ -54,8 +55,7 @@ function VerifyPage() {
         title: "Xác nhận email thành công! 🎉",
         description: "Email của bạn đã được xác nhận.",
       });
-
-      router.replace(`${data}`);
+      router.push(type ? `${data}` : "/");
     },
     onError: (error: AxiosError) => {
       if ((error.response?.data as ApiError).message === "Token not found") {
@@ -76,6 +76,8 @@ function VerifyPage() {
   });
 
   function onSubmit(data: ConfirmEmailRequest) {
+    console.log(data);
+
     mutation.mutate(data);
   }
 

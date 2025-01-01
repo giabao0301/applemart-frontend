@@ -1,18 +1,16 @@
 import { ProductItem } from "./product";
 
-interface CartItem {
+export interface CartItem {
   id: number;
   quantity: number;
   productItem: ProductItem;
 }
 
-interface CartItemRequest {
+export interface CartItemRequest {
   productItemId: number;
   quantity: number;
 }
 
-interface CartItemDeletionRequest {
+export interface CartItemDeletionRequest {
   productItemIds: number[];
 }
-
-export type { CartItem, CartItemRequest, CartItemDeletionRequest };

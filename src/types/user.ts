@@ -1,6 +1,6 @@
 import { boolean, number, string, z, ZodType } from "zod";
 
-type User = {
+export interface User {
   id: number;
   username: string;
   email: string;
@@ -10,14 +10,14 @@ type User = {
   profileImageUrl: string;
   roles: Array<Role>;
   enabled: boolean;
-};
+}
 
-type Role = {
+export interface Role {
   id: number;
   name: string;
-};
+}
 
-type Address = {
+export interface Address {
   id: number;
   recipient: string;
   phone: string;
@@ -27,7 +27,7 @@ type Address = {
   address: string;
   addressType: string;
   isDeliveryAddress: boolean;
-};
+}
 
 const usernameValidation = new RegExp(/^[a-zA-Z][a-zA-Z0-9._-]{3,16}$/);
 
@@ -41,11 +41,12 @@ export const UpdateProfileSchema = z.object({
 
   email: z.string().email({ message: "Email không hợp lệ" }),
 
-  phoneNumber: z.string().length(10, { message: "Số điện thoại không hợp lệ" }),
+  phoneNumber: z
+    .string()
+    .length(10, { message: "Số điện thoại không hợp lệ" })
+    .optional(),
 
   dateOfBirth: z.string().optional(),
 
   profileImageUrl: z.string().optional(),
 });
-
-export type { User, Address, Role };
