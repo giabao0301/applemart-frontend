@@ -5,6 +5,7 @@ import {
   getProductBySlug,
   getProductItemsByProductId,
 } from "@/services/productService";
+import { Avatar, Chip, Link } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 

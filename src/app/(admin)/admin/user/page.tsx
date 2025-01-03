@@ -22,11 +22,12 @@ import { Avatar, Chip, Navbar, Tooltip } from "@nextui-org/react";
 import ProfileActions from "@/components/landing/layout/ProfileActions";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteAccount, getUsers } from "@/services/userService";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, MessageCircle, Pencil, Trash2 } from "lucide-react";
 import { formatDate } from "@/utils/dateFormatter";
 import { Alert } from "@/components/ui/custom/AlertDialog";
 import { UserFormModal } from "@/components/admin/UserFormModal";
 import { User } from "@/types/user";
+import Chat from "@/components/Chat";
 
 type Props = {};
 
@@ -139,6 +140,14 @@ export default function UsersPage({}: Props) {
           <Trash2 className="text-error cursor-pointer" size={16} />
           {/* </Tooltip> */}
         </Alert>
+        {row.original.roles.some((role) => role.name !== "ADMIN") && (
+          <Chat userId={row.original.id}>
+            <MessageCircle
+              size={16}
+              className="cursor-pointer text-secondaryText"
+            />
+          </Chat>
+        )}
       </div>
     );
   };
