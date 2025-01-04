@@ -89,7 +89,7 @@ const columns: ColumnDef<User>[] = [
           color={row.getValue("enabled") === true ? "success" : "default"}
           className="text-white"
         >
-          {row.getValue("enabled") === true ? "Hoạt động" : "Chưa kích hoạt"}
+          {row.getValue("enabled") === true ? "Đã xác thực" : "Chưa xác thực"}
         </Chip>
       );
     },

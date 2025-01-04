@@ -8,10 +8,11 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
-import AddressItem from "./AddressItem";
+import AddressItem from "@/components/landing/address/AddressItem";
 import { useEffect, useState } from "react";
 import formatPrice from "@/utils/priceFormatter";
 import { CheckIcon } from "lucide-react";
+import { ShippingMethod } from "@/types/order";
 
 const ShippingMethodSelector = ({
   selectedItem,

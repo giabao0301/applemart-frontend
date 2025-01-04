@@ -4,7 +4,7 @@ import { UpdateProfileSchema } from "@/types/user";
 import { UpdateProfileFormData } from "@/types/form";
 import { User } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, DateInput, Spinner } from "@nextui-org/react";
+import { Button, DateInput, Form, Spinner } from "@nextui-org/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
@@ -48,12 +48,12 @@ const Page = () => {
   } = useForm<UpdateProfileFormData>({
     resolver: zodResolver(UpdateProfileSchema),
     defaultValues: {
-      username: "",
-      fullName: "",
-      email: "",
-      phoneNumber: "",
-      dateOfBirth: today(getLocalTimeZone()).toString(),
-      profileImageUrl: "",
+      username: user?.username || "",
+      fullName: user?.fullName || "",
+      email: user?.email || "",
+      phoneNumber: user?.phoneNumber || "",
+      dateOfBirth: user?.dateOfBirth || today(getLocalTimeZone()).toString(),
+      profileImageUrl: user?.profileImageUrl || "",
     },
   });
 
@@ -167,7 +167,7 @@ const Page = () => {
         <h2 className="text-xl">Hồ sơ của tôi</h2>
         <div className="pt-2">Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
       </div>
-      <form
+      <Form
         className="flex flex-col items-center"
         onSubmit={handleSubmit(onSubmit)}
       >
@@ -296,7 +296,7 @@ const Page = () => {
             </div>
           </div>
         </div>
-      </form>
+      </Form>
     </div>
   );
 };

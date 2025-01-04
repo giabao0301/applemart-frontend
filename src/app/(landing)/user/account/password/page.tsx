@@ -33,13 +33,13 @@ const Page = () => {
 
   const mutation = useMutation({
     mutationFn: changePassword,
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         title: "Đã lưu ✅",
         description:
           "Mật khẩu của bạn đã được thay đổi, vui lòng đăng nhập lại",
       });
-      logout();
+      await logout();
       router.replace("/login");
     },
     onError: (error: AxiosError) => {

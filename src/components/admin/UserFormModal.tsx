@@ -211,7 +211,7 @@ export function UserFormModal({
                     });
                   }}
                 >
-                  Kích hoạt
+                  Xác thực
                 </Switch>
               </ModalBody>
               <ModalFooter>
