@@ -8,12 +8,11 @@ Link to Frontend repo: [Applemart Frontend](https://github.com/giabao0301/applem
 
  - Trinh Gia Bao - 21521866@gm.uit.edu.vn - [Github](https://github.com/giabao0301) - [Facebook](https://www.facebook.com/gia.bao.377840/)
 ### Description
--   Applemart is an e-commerce system utilizing microservices architecture, using Next.js for frontend.
--   I use Spring Boot to build services, Spring Cloud to make gateway for microservices
--   I also use WebSocket for real-time communication, Kafka to sync between services and Zipkin for tracing.
--   I monitor the system health using Grafana and Prometheus.
--   The database I choose for this project is MySQL and Redis for cart service.
--   I have integrated VNPAY API for online payment method.
+-	Applemart is an e-commerce platform built with Next.js for a fast and dynamic frontend experience.
+-	I use Tailwind CSS, ShadCN UI, and NextUI to create a modern and intuitive UI.
+-	I integrate Cloudinary for optimized image management and TanStack Query for efficient data fetching.
+-	The application ensures a smooth user experience with optimized state management and dynamic UI components.
+-	The backend is built with Spring Boot, ensuring a robust and scalable system.
 
 ![Application Architecture](https://github.com/giabao0301/applemart-backend/blob/main/app-resources/architecture.png?raw=true)
 <div align="center">
